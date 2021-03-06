@@ -401,8 +401,7 @@ int main()
 	/*struct timeval t1, t2;
 	gettimeofday(&t1, NULL);*/
 	ofstream myfile;
-	random_device rd;
-	mt19937 mt(rd());
+	mt19937 mt(time(NULL));
 	uniform_real_distribution<double> u(0, 1);
 	myfile.open("spike_info_reduced_largesize.txt");
 	Vector<int> VE;//membrane potential: 0 represents base, 1 represents gate.

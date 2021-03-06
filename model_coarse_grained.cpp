@@ -309,6 +309,8 @@ int main()
 	}
 	//  struct timeval t1, t2;
 	//  gettimeofday(&t1, NULL);
+    int tm=(int)time(NULL);
+
 	ofstream myfile;
 	random_device rd;
 	mt19937 mt(rd());

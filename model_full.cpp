@@ -359,9 +359,10 @@ int main()
 {
   //  struct timeval t1, t2;
   //  gettimeofday(&t1, NULL);
+    
     ofstream myfile;
     random_device rd;
-    mt19937 mt(rd());
+    mt19937 mt(time(NULL));
     uniform_real_distribution<double> u(0, 1);
     myfile.open("spike_info_sample_largesize.txt");
     vector<int> VE(NE);//membrane potential
@@ -396,7 +397,7 @@ int main()
         Clock.push_back(0);
     Clock.maintain();
     cout << "start";
-    double terminate_time = 20;
+    double terminate_time = 1;
     vector<double> time_spike;
     time_spike.reserve(100000);
     vector<int> num_spike;
