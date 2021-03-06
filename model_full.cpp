@@ -18,21 +18,26 @@
 #define _USE_MATH_DEFINES
 using namespace std;
 
-int NE = 300;
-int NI = 100;
+//int NE = 300;
+//int NI = 100;
+//double SEE = 5;//strength of postsynaptic connection
+//double SIE = 2;
+//double SEI = -4.91;
+//double SII = -4.91;
+
+int NE = 75;
+int NI = 25;
+double SEE = 20;//strength of postsynaptic connection
+double SIE = 8;
+double SEI = -20;
+double SII = -20;
+
 int Level = 100;//membrane potential
 double PEE = 0.15;//probability of postsynaptic connections
 double PIE = 0.5;
 double PEI = 0.5;
 double PII = 0.4;
-//double SEE = 20;//strength of postsynaptic connection
-//double SIE = 8;
-//double SEI = -20;
-//double SII = -20;
-double SEE = 5;//strength of postsynaptic connection
-double SIE = 2;
-double SEI = -4.91;
-double SII = -4.91  ;
+
 double kickE = 7000.0;//external drive rate
 double kickI = 7000.0;
 //double Ref = 250.0;//time rate at state R
@@ -391,7 +396,7 @@ int main()
         Clock.push_back(0);
     Clock.maintain();
     cout << "start";
-    double terminate_time = 1;
+    double terminate_time = 20;
     vector<double> time_spike;
     time_spike.reserve(100000);
     vector<int> num_spike;
