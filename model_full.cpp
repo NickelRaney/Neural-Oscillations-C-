@@ -361,7 +361,6 @@ int main()
   //  gettimeofday(&t1, NULL);
     
     ofstream myfile;
-    random_device rd;
     mt19937 mt(time(NULL));
     uniform_real_distribution<double> u(0, 1);
     myfile.open("spike_info_sample_largesize.txt");
