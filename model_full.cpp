@@ -336,8 +336,8 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
             if (awakeI[whichHit])
             {
                 VI[whichHit] += real2int(SII * (VI[whichHit] - Reverse) / (Level - Reverse), mt, u);
-                if (VE[whichHit] < Reverse)
-                    VE[whichHit] = Reverse;
+                if (VI[whichHit] < Reverse)
+                    VI[whichHit] = Reverse;
             }
             Clock.switch_element(5, HitI * HII.size());
             break;
