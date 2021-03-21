@@ -5,8 +5,7 @@
 #include <time.h>
 #include <iostream>
 #include <fstream>
-#include <io.h>
-#include <direct.h>
+#include <sys/time.h>
 #include <cstdlib>
 #include <float.h>
 #include <random>
@@ -19,15 +18,78 @@
 #define _USE_MATH_DEFINES
 using namespace std;
 
+int E_spike = 0;
+int I_spike = 0;
+int NE;
+int NI;
+int Level;//membrane potential
+double PEE;//probability of postsynaptic connections
+double PIE;
+double PEI;
+double PII;
+double SEE;//strength of postsynaptic connection
+double SIE;
+double SEI;
+double SII;
+double kickE;//external drive rate
+double kickI;
+double Ref;//time rate at state R
+double HitEE;//delay time rate
+double HitIE;
+double HitI;//
+int Reverse;//reverse potential
+double terminate_time;
+
+//int NE = 75;
+//int NI = 25;
+//double SEE = 20;
+//double SIE = 8;
+//double SEI = -20;
+//double SII = -20;
+//int Level = 100;
+//double PEE = 0.15;
+//double PIE = 0.5;
+//double PEI = 0.5;
+//double PII = 0.4;
+//double kickE = 7000.0;
+//double kickI = 7000.0;
+//double Ref = 250.0;
+//double HitEE = 1000/1.4;
+//double HitIE = 1000/1.2;
+//double HitI = 1000/4.5;
+//double terminate_time = 10.0;
+//int Reverse = -66;//reverse potential
+//int E_spike = 0;
+//int I_spike = 0;
+
+
+//int NE = 300;
+//int NI = 100;
+//int Level = 100;//membrane potential
+//double PEE = 0.15;//probability of postsynaptic connections
+//double PIE = 0.5;
+//double PEI = 0.5;
+//double PII = 0.4;
+//double SEE = 5;//strength of postsynaptic connection
+//double SIE = 3;
+//double SEI = -2;
+//double SII = -2;
+//double kickE = 2000.0;//external drive rate
+//double kickI = 2000.0;
+//double Ref = 250.0;//time rate at state R
+//double HitEE = 1000.0/1.2;//delay time rate
+//double HitIE = 1000.0 / 2.0;
+//double HitI = 1000.0/4.0;//
+
+
+int gate = 74;
 string StringToNumstr(string s)
 {
     int i = 0;
-    while ((s[i] <= '0') || (s[i] >= '9')) i++;
+    while ((s[i] < '0') || (s[i] > '9')) i++;
     s = s.substr(i, s.length() - i);
     return s;
 }
-
-
 int real2int(const double x, mt19937& mt, uniform_real_distribution<double>& u)
 //choose a random integer n if x is not an integer, such that the expectation of n is equal to x
 {
@@ -129,11 +191,11 @@ public:
 
 };
 
-
 bool compare(int num)
 {
-    return num >= 74;
+    return num >= gate;
 }
+
 int find_index(Vector<double>& array, mt19937& mt, uniform_real_distribution<double>& u)
 //find a random element in a positive array. The probability of chosen is proportional to the value.
 {
@@ -155,9 +217,9 @@ void spikeE(const int whichHit, Vector<double>& Clock, vector<int>& VE, Vector<i
 {
     E_spike++;
     VE[whichHit] = 0;
-    //    awakeE[whichHit] = 0;
-    //    Eref.push_back(whichHit);
-    //    Clock.switch_element(6, Ref*Eref.size());
+    awakeE[whichHit] = 0;
+    Eref.push_back(whichHit);
+    Clock.switch_element(6, Ref * Eref.size());
     for (int i = 0; i < NE; i++)
     {
         if (u(mt) < PEE && awakeE[i])
@@ -180,9 +242,9 @@ void spikeI(const int whichHit, Vector<double>& Clock, vector<int>& VI, Vector<i
 {
     I_spike++;
     VI[whichHit] = 0;
-    //    awakeI[whichHit] = 0;
-    //    Iref.push_back(whichHit);
-    //    Clock.switch_element(7, Ref*Iref.size());
+    awakeI[whichHit] = 0;
+    Iref.push_back(whichHit);
+    Clock.switch_element(7, Ref * Iref.size());
     for (int i = 0; i < NE; i++)
     {
         if (u(mt) < PEI && awakeE[i])
@@ -201,46 +263,46 @@ void spikeI(const int whichHit, Vector<double>& Clock, vector<int>& VI, Vector<i
     Clock.switch_element(5, HitI * HII.size());
 }
 
+
 void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& record_time_point, vector<int>& N_GE, vector<int>& N_GI, vector<int>& total_HE,
-    vector<int>& total_HI, vector<int>& V_e_distribution, vector<int>& V_i_distribution,Vector<double>& Clock, vector<int>& VE, vector<int>& VI, Vector<int>& HEE, Vector<int>& HEI,
+    vector<int>& total_HI, vector<int>& V_e_distribution, vector<int>& V_i_distribution, Vector<double>& Clock, vector<int>& VE, vector<int>& VI, Vector<int>& HEE, Vector<int>& HEI,
     Vector<int>& HIE, Vector<int>& HII, Vector<int>& Eref, Vector<int>& Iref, vector<int>& awakeE, vector<int>& awakeI,
     const double terminate_time, mt19937& mt, uniform_real_distribution<double>& u)
 {
+
     double current_time = 0.0;
     double record_time = 0.0;
     int count = 0;
-    
+    int whichHit;
     while (current_time < terminate_time)
     {
-       
         if (current_time - record_time > 0.0005)
         {
             record_time = current_time;
             record_time_point.push_back(current_time);
-            total_HIE.push_back(HIE.size());
-            total_HEE.push_back(HEE.size());
-            total_HII.push_back(HII.size());
-            total_HEI.push_back(HEI.size());
+            total_HI.push_back(HII.size() + HEI.size());
+            total_HE.push_back(HEE.size() + HIE.size());
+            N_GE.push_back(count_if(VE.begin(), VE.end(), compare));
+            N_GI.push_back(count_if(VI.begin(), VI.end(), compare));
             for (int i = 0; i < NE; i++)
             {
-                V_e_distribution.push_back(VE[i]);
+                V_e_distribution.push_back(VE[i] + (1 - awakeE[i]) * (Reverse - 1));
             }
 
             for (int i = 0; i < NI; i++)
             {
-                V_i_distribution.push_back(VI[i]);
+                V_i_distribution.push_back(VI[i] + (1 - awakeI[i]) * (Reverse - 1));
             }
         }
         current_time += -log(1 - u(mt)) / Clock.get_sum();
         int index = find_index(Clock, mt, u);
-        int whichHit;
+
         count++;
         int local_index;
         //            cout<<"time "<<current_time <<" index "<<index<<endl;
         switch (index)
         {
         case 0:
-            // external E 
             whichHit = floor(u(mt) * NE);
             if (awakeE[whichHit])
             {
@@ -254,7 +316,6 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
             }
             break;
         case 1:
-            // external I
             whichHit = floor(u(mt) * NI);
             if (awakeI[whichHit])
             {
@@ -268,7 +329,6 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
             }
             break;
         case 2:
-
             whichHit = HEE.select(mt, u);
             //                cout<<"ID = "<<whichHit<<" V = "<<VE[whichHit]<<endl<<" status = "<<awakeE[whichHit]<<endl;
             if (awakeE[whichHit])
@@ -304,7 +364,7 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
             whichHit = HEI.select(mt, u);
             if (awakeE[whichHit])
             {
-                VE[whichHit] += real2int(SEI * (VE[whichHit] - Reverse) / (Level - Reverse), mt, u);
+                VE[whichHit] += real2int(SEI, mt, u);
                 if (VE[whichHit] < Reverse)
                     VE[whichHit] = Reverse;
             }
@@ -314,7 +374,7 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
             whichHit = HII.select(mt, u);
             if (awakeI[whichHit])
             {
-                VI[whichHit] += real2int(SII * (VI[whichHit] - Reverse) / (Level - Reverse), mt, u);
+                VI[whichHit] += real2int(SII, mt, u);
                 if (VI[whichHit] < Reverse)
                     VI[whichHit] = Reverse;
             }
@@ -323,12 +383,12 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
         case 6:
             whichHit = Eref.select(mt, u);
             awakeE[whichHit] = 1;
-            Clock.switch_element(6, Ref*Eref.size());
+            Clock.switch_element(6, Ref * Eref.size());
             break;
         case 7:
             whichHit = Iref.select(mt, u);
             awakeI[whichHit] = 1;
-            Clock.switch_element(7, Ref*Iref.size());
+            Clock.switch_element(7, Ref * Iref.size());
             break;
         }
     }
@@ -340,51 +400,55 @@ int main()
     inf.open(".//model_full_params.txt");
     string s;
     getline(inf, s);
-    int NE = stoi(StringToNumstr(s));
+    NE = stoi(StringToNumstr(s));
     getline(inf, s);
-    int NI = stoi(StringToNumstr(s));
+    NI = stoi(StringToNumstr(s));
     getline(inf, s);
-    double SEE = stod(StringToNumstr(s));//strength of postsynaptic connection
+    SEE = stod(StringToNumstr(s));//strength of postsynaptic connection
     getline(inf, s);
-    double SIE = stod(StringToNumstr(s));
+    SIE = stod(StringToNumstr(s));
     getline(inf, s);
-    double SEI = -stod(StringToNumstr(s));
+    SEI = -stod(StringToNumstr(s));
     getline(inf, s);
-    double SII = -stod(StringToNumstr(s));
+    SII = -stod(StringToNumstr(s));
 
     getline(inf, s);
-    int Level = stoi(StringToNumstr(s));//membrane potential
+    Level = stoi(StringToNumstr(s));//membrane potential
     getline(inf, s);
-    double PEE = stod(StringToNumstr(s));//probability of postsynaptic connections
+    PEE = stod(StringToNumstr(s));//probability of postsynaptic connections
     getline(inf, s);
-    double PIE = stod(StringToNumstr(s));
+    PIE = stod(StringToNumstr(s));
     getline(inf, s);
-    double PEI = stod(StringToNumstr(s));
+    PEI = stod(StringToNumstr(s));
     getline(inf, s);
-    double PII = stod(StringToNumstr(s));
+    PII = stod(StringToNumstr(s));
 
     getline(inf, s);
-    double kickE = stod(StringToNumstr(s));//external drive rate
+    kickE = stod(StringToNumstr(s));//external drive rate
     getline(inf, s);
-    double kickI = stod(StringToNumstr(s));
+    kickI = stod(StringToNumstr(s));
     getline(inf, s);
-    double Ref = stod(StringToNumstr(s));//time rate at state R
+    Ref = stod(StringToNumstr(s));//time rate at state R
     getline(inf, s);
-    double HitEE = 1000.0 / stod(StringToNumstr(s));//delay time rate
+    HitEE = 1000.0 / stod(StringToNumstr(s));//delay time rate
     getline(inf, s);
-    double HitIE = 1000.0 / stod(StringToNumstr(s));
+    HitIE = 1000.0 / stod(StringToNumstr(s));
     getline(inf, s);
-    double HitI = 1000.0 / stod(StringToNumstr(s));//
+    HitI = 1000.0 / stod(StringToNumstr(s));//
     getline(inf, s);
-    int Reverse = -stoi(StringToNumstr(s));//reverse potential
+    Reverse = -stoi(StringToNumstr(s));//reverse potential
     getline(inf, s);
-    double terminate_time = stod(StringToNumstr(s));
-    int E_spike = 0;
-    int I_spike = 0;
-    
+    terminate_time = stod(StringToNumstr(s));
+
+
+
+    struct timeval t1, t2;
+    gettimeofday(&t1, NULL);
     ofstream myfile;
+
     mt19937 mt(time(NULL));
     uniform_real_distribution<double> u(0, 1);
+
     vector<int> VE(NE);//membrane potential
     vector<int> VI(NI);
     for (auto i : VE)
@@ -407,59 +471,58 @@ int main()
     for (auto& i : awakeI)
         i = 1;
     Vector<double> Clock;
-    Clock.reserve(6);
-    // 0 Edrive, 1 Idrive, 2 HEE, 3, HEI, 4, HIE, 5, HII
-//  Clock.reserve(8);
+    Clock.reserve(8);
     //0 Edrive, 1 Idrive, 2 HEE, 3, HEI, 4, HIE, 5, HII, 6, Eref, 7, Iref
     Clock.push_back(NE * kickE);
     Clock.push_back(NI * kickI);
-    for (int i = 2; i < 6; i++)
+    for (int i = 2; i < 8; i++)
         Clock.push_back(0);
     Clock.maintain();
-    cout << "start";
+    cout << "start" << endl;
+
     vector<double> time_spike;
     time_spike.reserve(100000);
     vector<int> num_spike;
     num_spike.reserve(100000);
     vector<double> record_time_point;
     record_time_point.reserve(250000);
-    vector<int> total_HEE;
-    total_HEE.reserve(250000);
-    vector<int> total_HIE;
-    total_HIE.reserve(250000);
-    vector<int> total_HEI;
-    total_HEI.reserve(250000);
-    vector<int> total_HII;
-    total_HII.reserve(250000);
+    vector<int> N_GE;
+    N_GE.reserve(250000);
+    vector<int> N_GI;
+    N_GI.reserve(250000);
+    vector<int> total_HE;
+    total_HE.reserve(250000);
+    vector<int> total_HI;
+    total_HI.reserve(250000);
     vector<int> V_e_distribution;
     V_e_distribution.reserve(8000000);
     vector<int> V_i_distribution;
     V_i_distribution.reserve(8000000);
 
-    update(time_spike, num_spike, record_time_point, total_HEE, total_HIE, total_HEI, total_HII, V_e_distribution, V_i_distribution, Clock, VE, VI, HEE, HEI, HIE, HII, Eref, Iref, awakeE, awakeI, terminate_time, mt, u);
+
+
+
+
+    update(time_spike, num_spike, record_time_point, N_GE, N_GI, total_HE, total_HI, V_e_distribution, V_i_distribution, Clock, VE, VI, HEE, HEI, HIE, HII, Eref, Iref, awakeE, awakeI, terminate_time, mt, u);
 
     cout << "E spike rate= " << (double)E_spike / (terminate_time * NE) << endl;
     cout << "I spike rate = " << (double)I_spike / (terminate_time * NI) << endl;
     int spike_count = time_spike.size();
 
-    std::string save_path = ".//ouputs//model_full"
-        if (_access(save_path.c_str(),0) == -1)
-            _mkdir(save_path.c_str())
-
-    myfile.open(".//outputs//model_full//spike_info.txt");
+    myfile.open("spike_info_ref.txt");
     for (int i = 0; i < spike_count; i++)
     {
         myfile << time_spike[i] << "  " << num_spike[i] << endl;
     }
     myfile.close();
-    myfile.open(".//outputs//model_full//H_info.txt");
+
+    myfile.open("trajectory_info_ref.txt");
     for (int i = 0; i < total_HI.size(); i++)
     {
-        myfile << record_time_point[i] << " " << total_HEE[i] << " " << total_HIE[i] << " " << total_HEI[i] << " " << total_HII[i] << endl;
+        myfile << record_time_point[i] << " " << N_GE[i] << " " << N_GI[i] << " " << total_HE[i] << " " << total_HI[i] << endl;
     }
     myfile.close();
-
-    myfile.open(".//outputs//model_full//V_info.txt")
+    myfile.open("membrane_potential_sample_ref.txt");
     for (int i = 0; i < total_HI.size(); i++)
     {
         for (int j = 0; j < NE; j++)
@@ -474,20 +537,12 @@ int main()
     }
     myfile.close();
 
+    gettimeofday(&t2, NULL);
+    double delta = ((t2.tv_sec - t1.tv_sec) * 1000000u +
+        t2.tv_usec - t1.tv_usec) / 1.e6;
 
-
-
-  //  gettimeofday(&t2, NULL);
-  //  double delta = ((t2.tv_sec - t1.tv_sec) * 1000000u +
-  //      t2.tv_usec - t1.tv_usec) / 1.e6;
-
-   // cout << "total CPU time = " << delta << endl;
+    cout << "total CPU time = " << delta << endl;
 
 }
-
-
-
-
-
 
 

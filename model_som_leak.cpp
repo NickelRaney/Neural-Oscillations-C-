@@ -1,4 +1,3 @@
-
 #include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,19 +39,19 @@ using namespace std;
 //int I_spike = 0;
 //int gate = 74;
 
-
-int NE = 75;
-int NI = 19;
-int NS = 6;
-double SEE = 20;//strength of postsynaptic connection
-double SIE = 8;
-double SSE = 8;
-double SEI = -20;
-double SII = -20;
-double SSI = -20;
-double SES = -5;
-double SIS = -20;
-double SSS = ? ? ? ;
+double factor = 1.5;
+int NE = 300;
+int NI = 70;
+int NS = 30;
+double SEE = 5;//strength of postsynaptic connection
+double SIE = 2;
+double SSE = 2;
+double SEI = -4.91;
+double SII = -4.91;
+double SSI = -4.91;
+double SES = -4.91/factor;
+double SIS = -4.91;
+double SSS = 0;
 
 int Level = 100;//membrane potential
 double PEE = 0.15;//probability of postsynaptic connections
@@ -61,10 +60,9 @@ double PSE = 0.5;
 double PEI = 0.5;
 double PII = 0.4;
 double PSI = 0.4;
-double PES = 0.7;
+double PES = 0.5*factor;
 double PIS = 0.4;
 double PSS = 0.4;
-
 
 double kickE = 7000.0;//external drive rate
 double kickI = 7000.0;
@@ -73,14 +71,17 @@ double Ref = 250.0;//time rate at state R
 double HitEE = 1000.0 / 1.4;//delay time rate
 double HitIE = 1000.0 / 1.2;
 double HitSE = 1000.0 / 1.2;
-double HitI = 1000.0 / 4.5;//
-double HitSS = ? ? ?;
+double HitI = 1000.0 / 4.5;
+double HitES = 1000.0 / 20;
+double HitIS = 1000.0 / 4.5;
+double HitSS = 1000.0 / 0.1;
 
-double LeakE = 1000.0 / 20;
-double LeakI = 1000.0 / 16.7;
-double LeakS = 1000.0 / 20;
-double gLeak = ? ? ? ;
+double LeakE = 10*1000.0 / 20;
+double LeakI = 10*1000.0 / 16.7;
+double LeakS = 10*1000.0 / 20;
+double gLeak = -1+pow((1/2.71828),0.1);  
 int Reverse = -66;//reverse potential
+
 int E_spike = 0;
 int I_spike = 0;
 int S_spike = 0;
@@ -186,10 +187,7 @@ public:
 
 };
 
-bool compare(int num)
-{
-    return num >= gate;
-}
+
 
 int find_index(Vector<double>& array, mt19937& mt, uniform_real_distribution<double>& u)
 //find a random element in a positive array. The probability of chosen is proportional to the value.
@@ -239,9 +237,9 @@ void spikeE(const int whichHit, Vector<double>& Clock, vector<int>& VE, Vector<i
             HSE.push_back(i);
         }
     }
-    Clock.switch_element(6, HitE * HEE.size());
-    Clock.switch_element(7, HitE * HIE.size());
-    Clock.switch_element(8, HitE * HIE.size());
+    Clock.switch_element(6, HitEE * HEE.size());
+    Clock.switch_element(7, HitIE * HIE.size());
+    Clock.switch_element(8, HitSE * HSE.size());
 
 }
 
@@ -276,7 +274,7 @@ void spikeI(const int whichHit, Vector<double>& Clock, vector<int>& VI, Vector<i
     }
     Clock.switch_element(9, HitI * HEI.size());
     Clock.switch_element(10, HitI * HII.size());
-    Clock.switch_element(11, HitI * HSI.size())
+    Clock.switch_element(11, HitI * HSI.size());
 }
 
 void spikeS(const int whichHit, Vector<double>& Clock, vector<int>& VS, Vector<int>& HES, Vector<int>& HIS, Vector<int>& HSS, Vector<int>& Sref,
@@ -289,29 +287,30 @@ void spikeS(const int whichHit, Vector<double>& Clock, vector<int>& VS, Vector<i
     Clock.switch_element(17, Ref * Sref.size());
     for (int i = 0; i < NE; i++)
     {
-        if (u(mt) < PEI && awakeE[i])
+        if (u(mt) < PES && awakeE[i])
         {
-            HEI.push_back(i);
+            HES.push_back(i);
         }
     }
     for (int i = 0; i < NI; i++)
     {
-        if (u(mt) < PII && awakeI[i])
+        if (u(mt) < PIS && awakeI[i])
         {
-            HII.push_back(i);
+            HIS.push_back(i);
         }
     }
     for (int i = 0; i < NS; i++)
     {
-        if (u(mt) < PSI && awakeS[i])
+        if (u(mt) < PSS && awakeS[i])
         {
-            HSI.push_back(i);
+            HSS.push_back(i);
         }
     }
-    Clock.switch_element(12, HitS * HES.size());
-    Clock.switch_element(13, HitS * HIS.size());
-    Clock.switch_element(14, HitS * HSS.size());
+    Clock.switch_element(12, HitES * HES.size());
+    Clock.switch_element(13, HitIS * HIS.size());
+    Clock.switch_element(14, HitSS * HSS.size());
 }
+
 
 
 
@@ -324,6 +323,7 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
 {
     double current_time = 0.0;
     double record_time = 0.0;
+    double Leak = 0;
     int count = 0;
     int whichHit;
     while (current_time < terminate_time)
@@ -334,8 +334,6 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
             record_time_point.push_back(current_time);
             total_HI.push_back(HII.size() + HEI.size());
             total_HE.push_back(HEE.size() + HIE.size());
-            N_GE.push_back(count_if(VE.begin(), VE.end(), compare));
-            N_GI.push_back(count_if(VI.begin(), VI.end(), compare));
             for (int i = 0; i < NE; i++)
             {
                 V_e_distribution.push_back(VE[i] + (1 - awakeE[i]) * (Reverse - 1));
@@ -391,7 +389,7 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
                 {
                     spikeS(whichHit, Clock, VS, HES, HIS, HSS, Sref, awakeE, awakeI, awakeS, mt, u);
                     time_spike.push_back(current_time);
-                    num_spike.push_back(whichHit + NE + NS);
+                    num_spike.push_back(whichHit + NE + NI);
                 }
             }
             break;
@@ -435,7 +433,7 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
                     num_spike.push_back(whichHit);
                 }
             }
-            Clock.switch_element(6, HitE * HEE.size());
+            Clock.switch_element(6, HitEE * HEE.size());
             break;
         case 7:
             whichHit = HIE.select(mt, u);
@@ -446,10 +444,10 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
                 {
                     spikeI(whichHit, Clock, VI, HEI, HII, HSI, Iref, awakeE, awakeI, awakeS, mt, u);
                     time_spike.push_back(current_time);
-                    num_spike.push_back(whichHit);
+                    num_spike.push_back(whichHit + NE);
                 }
             }
-            Clock.switch_element(7, HitE * HIE.size());
+            Clock.switch_element(7, HitIE * HIE.size());
             break;
         case 8:
             whichHit = HSE.select(mt, u);
@@ -460,10 +458,10 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
                 {
                     spikeS(whichHit, Clock, VS, HES, HIS, HSS, Sref, awakeE, awakeI, awakeS, mt, u);
                     time_spike.push_back(current_time);
-                    num_spike.push_back(whichHit);
+                    num_spike.push_back(whichHit + NE + NI);
                 }
             }
-            Clock.switch_element(8, HitE * HSE.size());
+            Clock.switch_element(8, HitSE * HSE.size());
             break;
         case 9:
             whichHit = HEI.select(mt, u);
@@ -503,7 +501,7 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
                 if (VE[whichHit] < Reverse)
                     VE[whichHit] = Reverse;
             }
-            Clock.switch_element(12, HitS * HES.size());
+            Clock.switch_element(12, HitES * HES.size());
             break;
         case 13:
             whichHit = HIS.select(mt, u);
@@ -513,7 +511,7 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
                 if (VI[whichHit] < Reverse)
                     VI[whichHit] = Reverse;
             }
-            Clock.switch_element(13, HitS * HIS.size());
+            Clock.switch_element(13, HitIS * HIS.size());
             break;
         case 14:
             whichHit = HSS.select(mt, u);
@@ -523,7 +521,7 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
                 if (VS[whichHit] < Reverse)
                     VS[whichHit] = Reverse;
             }
-            Clock.switch_element(14, HitS * HSS.size());
+            Clock.switch_element(14, HitSS * HSS.size());
             break;
         case 15:
             whichHit = Eref.select(mt, u);
@@ -635,8 +633,8 @@ int main()
 
 
 
-    update(time_spike, num_spike, record_time_point, N_GE, N_GI, total_HE, total_HI, V_e_distribution, V_i_distribution, V_s_distribution, Clock, VE, VI, VS
-        HEE, HEI, HIE, HII, HES, Eref, Iref, Sref, awakeE, awakeI, awakeS, terminate_time, mt, u);
+    update(time_spike, num_spike, record_time_point, N_GE, N_GI, total_HE, total_HI, V_e_distribution, V_i_distribution, V_s_distribution, Clock, VE, VI, VS,
+        HEE, HEI, HES, HIE, HII, HIS, HSE, HSI, HSS, Eref, Iref, Sref, awakeE, awakeI, awakeS, terminate_time, mt, u);
 
     cout << "E spike rate= " << (double)E_spike / (terminate_time * NE) << endl;
     cout << "I spike rate = " << (double)I_spike / (terminate_time * NI) << endl;

@@ -18,27 +18,78 @@
 #define _USE_MATH_DEFINES
 using namespace std;
 
-int NE = 300;
-int NI = 100;
-int Level = 100;//membrane potential
-double PEE = 0.15;//probability of postsynaptic connections
-double PIE = 0.5;
-double PEI = 0.5;
-double PII = 0.4;
-double SEE = 5;//strength of postsynaptic connection
-double SIE = 3;
-double SEI = -2;
-double SII = -2;
-double kickE = 2000.0;//external drive rate
-double kickI = 2000.0;
-double Ref = 250.0;//time rate at state R
-double HitE = 1000.0/2.0;//delay time rate
-double HitI = 1000.0/4.0;//
-int Reverse = -66;//reverse potential
 int E_spike = 0;
 int I_spike = 0;
-int gate = 74;
+int NE;
+int NI;
+int Level;//membrane potential
+double PEE;//probability of postsynaptic connections
+double PIE;
+double PEI;
+double PII;
+double SEE;//strength of postsynaptic connection
+double SIE;
+double SEI;
+double SII;
+double kickE;//external drive rate
+double kickI;
+double Ref;//time rate at state R
+double HitEE;//delay time rate
+double HitIE;
+double HitI;//
+int Reverse;//reverse potential
+double terminate_time;
 
+//int NE = 75;
+//int NI = 25;
+//double SEE = 20;
+//double SIE = 8;
+//double SEI = -20;
+//double SII = -20;
+//int Level = 100;
+//double PEE = 0.15;
+//double PIE = 0.5;
+//double PEI = 0.5;
+//double PII = 0.4;
+//double kickE = 7000.0;
+//double kickI = 7000.0;
+//double Ref = 250.0;
+//double HitEE = 1000/1.4;
+//double HitIE = 1000/1.2;
+//double HitI = 1000/4.5;
+//double terminate_time = 10.0;
+//int Reverse = -66;//reverse potential
+//int E_spike = 0;
+//int I_spike = 0;
+
+
+//int NE = 300;
+//int NI = 100;
+//int Level = 100;//membrane potential
+//double PEE = 0.15;//probability of postsynaptic connections
+//double PIE = 0.5;
+//double PEI = 0.5;
+//double PII = 0.4;
+//double SEE = 5;//strength of postsynaptic connection
+//double SIE = 3;
+//double SEI = -2;
+//double SII = -2;
+//double kickE = 2000.0;//external drive rate
+//double kickI = 2000.0;
+//double Ref = 250.0;//time rate at state R
+//double HitEE = 1000.0/1.2;//delay time rate
+//double HitIE = 1000.0 / 2.0;
+//double HitI = 1000.0/4.0;//
+
+
+int gate = 74;
+string StringToNumstr(string s)
+{
+    int i = 0;
+    while ((s[i] < '0') || (s[i] > '9')) i++;
+    s = s.substr(i, s.length() - i);
+    return s;
+}
 int real2int(const double x, mt19937& mt, uniform_real_distribution<double>& u)
 //choose a random integer n if x is not an integer, such that the expectation of n is equal to x
 {
@@ -183,8 +234,8 @@ void spikeE(const int whichHit, Vector<double>& Clock, vector<int> &VE, Vector<i
             HIE.push_back(i);
         }
     }
-    Clock.switch_element(2, HitE*HEE.size());
-    Clock.switch_element(3, HitE*HIE.size());
+    Clock.switch_element(2, HitEE*HEE.size());
+    Clock.switch_element(3, HitIE*HIE.size());
     
 }
 void spikeI(const int whichHit, Vector<double>& Clock, vector<int> &VI, Vector<int> &HEI, Vector<int> &HII, Vector<int> &Iref, vector<int> &awakeE, vector<int> &awakeI, mt19937& mt, uniform_real_distribution<double>& u)
@@ -218,6 +269,26 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
     Vector<int>& HIE, Vector<int>& HII, Vector<int>& Eref, Vector<int>& Iref, vector<int>& awakeE, vector<int>& awakeI,
     const double terminate_time, mt19937& mt, uniform_real_distribution<double>& u)
 {
+    std::cout << NE << endl;
+    std::cout << NI << endl;
+    std::cout << SEE << endl;
+    std::cout << SIE << endl;
+    std::cout << SEI << endl;
+    std::cout << SII << endl;
+    std::cout << Level << endl;
+    std::cout << PEE << endl;
+    std::cout << PIE << endl;
+    std::cout << PEI << endl;
+    std::cout << PII << endl;
+    std::cout << kickE << endl;
+    std::cout << kickI << endl;
+    std::cout << Ref << endl;
+    std::cout << HitEE << endl;
+    std::cout << HitIE << endl;
+    std::cout << HitI << endl;
+    std::cout << Reverse << endl;
+    std::cout << terminate_time << endl;
+    std::cin.get();
     double current_time = 0.0;
     double record_time = 0.0;
     int count = 0;
@@ -291,7 +362,7 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
                     }
                 }
 //                cout<<" after "<<VE[whichHit]<<endl;
-                Clock.switch_element(2, HitE*HEE.size());
+                Clock.switch_element(2, HitEE*HEE.size());
                 break;
             case 3:
                 whichHit = HIE.select(mt, u);
@@ -306,7 +377,7 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
                         num_spike.push_back(whichHit + NE);
                     }
                 }
-                Clock.switch_element(3, HitE*HIE.size());
+                Clock.switch_element(3, HitIE*HIE.size());
                 break;
             case 4:
                 whichHit = HEI.select(mt, u);
@@ -344,6 +415,71 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
 
 int main()
 {
+    ifstream inf;
+    inf.open(".//model_full_params.txt");
+    string s;
+    getline(inf, s);
+    NE = stoi(StringToNumstr(s));
+    getline(inf, s);
+    NI = stoi(StringToNumstr(s));
+    getline(inf, s);
+    SEE = stod(StringToNumstr(s));//strength of postsynaptic connection
+    getline(inf, s);
+    SIE = stod(StringToNumstr(s));
+    getline(inf, s);
+    SEI = -stod(StringToNumstr(s));
+    getline(inf, s);
+    SII = -stod(StringToNumstr(s));
+
+    getline(inf, s);
+    Level = stoi(StringToNumstr(s));//membrane potential
+    getline(inf, s);
+    PEE = stod(StringToNumstr(s));//probability of postsynaptic connections
+    getline(inf, s);
+    PIE = stod(StringToNumstr(s));
+    getline(inf, s);
+    PEI = stod(StringToNumstr(s));
+    getline(inf, s);
+    PII = stod(StringToNumstr(s));
+
+    getline(inf, s);
+    kickE = stod(StringToNumstr(s));//external drive rate
+    getline(inf, s);
+    kickI = stod(StringToNumstr(s));
+    getline(inf, s);
+    Ref = stod(StringToNumstr(s));//time rate at state R
+    getline(inf, s);
+    HitEE = 1000.0 / stod(StringToNumstr(s));//delay time rate
+    getline(inf, s);
+    HitIE = 1000.0 / stod(StringToNumstr(s));
+    getline(inf, s);
+    HitI = 1000.0 / stod(StringToNumstr(s));//
+    getline(inf, s);
+    Reverse = -stoi(StringToNumstr(s));//reverse potential
+    getline(inf, s);
+    terminate_time = stod(StringToNumstr(s));
+
+    std::cout << NE << endl;
+    std::cout << NI << endl;
+    std::cout << SEE << endl;
+    std::cout << SIE << endl;
+    std::cout << SEI << endl;
+    std::cout << SII << endl;
+    std::cout << Level << endl;
+    std::cout << PEE << endl;
+    std::cout << PIE << endl;
+    std::cout << PEI << endl;
+    std::cout << PII << endl;
+    std::cout << kickE << endl;
+    std::cout << kickI << endl;
+    std::cout << Ref << endl;
+    std::cout << HitEE << endl;
+    std::cout << HitIE << endl;
+    std::cout << HitI << endl;
+    std::cout << Reverse << endl;
+    std::cout << terminate_time << endl;
+    std::cin.get();
+
     struct timeval t1, t2;
     gettimeofday(&t1,NULL);
     ofstream myfile;
@@ -381,7 +517,7 @@ int main()
         Clock.push_back(0);
     Clock.maintain();
     cout << "start" << endl;
-    double terminate_time = 10.0;
+    
     vector<double> time_spike;
     time_spike.reserve(100000);
     vector<int> num_spike;
