@@ -5,7 +5,8 @@
 #include <time.h>
 #include <iostream>
 #include <fstream>
-//#include <sys/time.h>
+#include <io.h>
+#include <direct.h>
 #include <cstdlib>
 #include <float.h>
 #include <random>
@@ -18,35 +19,13 @@
 #define _USE_MATH_DEFINES
 using namespace std;
 
-//int NE = 300;
-//int NI = 100;
-//double SEE = 5;//strength of postsynaptic connection
-//double SIE = 2;
-//double SEI = -4.91;
-//double SII = -4.91;
-
-int NE = 75;
-int NI = 25;
-double SEE = 20;//strength of postsynaptic connection
-double SIE = 8;
-double SEI = -20;
-double SII = -20;
-
-int Level = 100;//membrane potential
-double PEE = 0.15;//probability of postsynaptic connections
-double PIE = 0.5;
-double PEI = 0.5;
-double PII = 0.4;
-
-double kickE = 7000.0;//external drive rate
-double kickI = 7000.0;
-//double Ref = 250.0;//time rate at state R
-double HitEE = 1000.0 / 1.4;//delay time rate
-double HitIE = 1000.0 / 1.2;
-double HitI = 1000.0 / 4.5;//
-int Reverse = -66;//reverse potential
-int E_spike = 0;
-int I_spike = 0;
+string StringToNumstr(string s)
+{
+    int i = 0;
+    while ((s[i] <= '0') || (s[i] >= '9')) i++;
+    s = s.substr(i, s.length() - i);
+    return s;
+}
 
 
 int real2int(const double x, mt19937& mt, uniform_real_distribution<double>& u)
@@ -238,10 +217,10 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
         {
             record_time = current_time;
             record_time_point.push_back(current_time);
-            total_HI.push_back(HII.size() + HEI.size());
-            total_HE.push_back(HEE.size() + HIE.size());
-            N_GE.push_back(count_if(VE.begin(), VE.end(), compare));
-            N_GI.push_back(count_if(VI.begin(), VI.end(), compare));
+            total_HIE.push_back(HIE.size());
+            total_HEE.push_back(HEE.size());
+            total_HII.push_back(HII.size());
+            total_HEI.push_back(HEI.size());
             for (int i = 0; i < NE; i++)
             {
                 V_e_distribution.push_back(VE[i]);
@@ -341,29 +320,71 @@ void update(vector<double>& time_spike, vector<int>& num_spike, vector<double>& 
             }
             Clock.switch_element(5, HitI * HII.size());
             break;
-            //            case 6:
-            //                whichHit = Eref.select(mt, u);
-            //                awakeE[whichHit] = 1;
-            //                Clock.switch_element(6, Ref*Eref.size());
-            //                break;
-            //            case 7:
-            //                whichHit = Iref.select(mt, u);
-            //                awakeI[whichHit] = 1;
-            //                Clock.switch_element(7, Ref*Iref.size());
-            //                break;
+        case 6:
+            whichHit = Eref.select(mt, u);
+            awakeE[whichHit] = 1;
+            Clock.switch_element(6, Ref*Eref.size());
+            break;
+        case 7:
+            whichHit = Iref.select(mt, u);
+            awakeI[whichHit] = 1;
+            Clock.switch_element(7, Ref*Iref.size());
+            break;
         }
     }
 }
 
 int main()
 {
-  //  struct timeval t1, t2;
-  //  gettimeofday(&t1, NULL);
+    ifstream inf;
+    inf.open(".//model_full_params.txt");
+    string s;
+    getline(inf, s);
+    int NE = stoi(StringToNumstr(s));
+    getline(inf, s);
+    int NI = stoi(StringToNumstr(s));
+    getline(inf, s);
+    double SEE = stod(StringToNumstr(s));//strength of postsynaptic connection
+    getline(inf, s);
+    double SIE = stod(StringToNumstr(s));
+    getline(inf, s);
+    double SEI = -stod(StringToNumstr(s));
+    getline(inf, s);
+    double SII = -stod(StringToNumstr(s));
+
+    getline(inf, s);
+    int Level = stoi(StringToNumstr(s));//membrane potential
+    getline(inf, s);
+    double PEE = stod(StringToNumstr(s));//probability of postsynaptic connections
+    getline(inf, s);
+    double PIE = stod(StringToNumstr(s));
+    getline(inf, s);
+    double PEI = stod(StringToNumstr(s));
+    getline(inf, s);
+    double PII = stod(StringToNumstr(s));
+
+    getline(inf, s);
+    double kickE = stod(StringToNumstr(s));//external drive rate
+    getline(inf, s);
+    double kickI = stod(StringToNumstr(s));
+    getline(inf, s);
+    double Ref = stod(StringToNumstr(s));//time rate at state R
+    getline(inf, s);
+    double HitEE = 1000.0 / stod(StringToNumstr(s));//delay time rate
+    getline(inf, s);
+    double HitIE = 1000.0 / stod(StringToNumstr(s));
+    getline(inf, s);
+    double HitI = 1000.0 / stod(StringToNumstr(s));//
+    getline(inf, s);
+    int Reverse = -stoi(StringToNumstr(s));//reverse potential
+    getline(inf, s);
+    double terminate_time = stod(StringToNumstr(s));
+    int E_spike = 0;
+    int I_spike = 0;
     
     ofstream myfile;
     mt19937 mt(time(NULL));
     uniform_real_distribution<double> u(0, 1);
-    myfile.open("spike_info_sample_largesize.txt");
     vector<int> VE(NE);//membrane potential
     vector<int> VI(NI);
     for (auto i : VE)
@@ -396,43 +417,49 @@ int main()
         Clock.push_back(0);
     Clock.maintain();
     cout << "start";
-    double terminate_time = 1;
     vector<double> time_spike;
     time_spike.reserve(100000);
     vector<int> num_spike;
     num_spike.reserve(100000);
     vector<double> record_time_point;
     record_time_point.reserve(250000);
-    vector<int> N_GE;
-    N_GE.reserve(250000);
-    vector<int> N_GI;
-    N_GI.reserve(250000);
-    vector<int> total_HE;
-    total_HE.reserve(250000);
-    vector<int> total_HI;
-    total_HI.reserve(250000);
+    vector<int> total_HEE;
+    total_HEE.reserve(250000);
+    vector<int> total_HIE;
+    total_HIE.reserve(250000);
+    vector<int> total_HEI;
+    total_HEI.reserve(250000);
+    vector<int> total_HII;
+    total_HII.reserve(250000);
     vector<int> V_e_distribution;
     V_e_distribution.reserve(8000000);
     vector<int> V_i_distribution;
     V_i_distribution.reserve(8000000);
 
-    update(time_spike, num_spike, record_time_point, N_GE, N_GI, total_HE, total_HI, V_e_distribution, V_i_distribution, Clock, VE, VI, HEE, HEI, HIE, HII, Eref, Iref, awakeE, awakeI, terminate_time, mt, u);
+    update(time_spike, num_spike, record_time_point, total_HEE, total_HIE, total_HEI, total_HII, V_e_distribution, V_i_distribution, Clock, VE, VI, HEE, HEI, HIE, HII, Eref, Iref, awakeE, awakeI, terminate_time, mt, u);
 
     cout << "E spike rate= " << (double)E_spike / (terminate_time * NE) << endl;
     cout << "I spike rate = " << (double)I_spike / (terminate_time * NI) << endl;
     int spike_count = time_spike.size();
+
+    std::string save_path = ".//ouputs//model_full"
+        if (_access(save_path.c_str(),0) == -1)
+            _mkdir(save_path.c_str())
+
+    myfile.open(".//outputs//model_full//spike_info.txt");
     for (int i = 0; i < spike_count; i++)
     {
         myfile << time_spike[i] << "  " << num_spike[i] << endl;
     }
     myfile.close();
-    myfile.open("trajectory_info_sample_largesize.txt");
+    myfile.open(".//outputs//model_full//H_info.txt");
     for (int i = 0; i < total_HI.size(); i++)
     {
-        myfile << record_time_point[i] << " " << N_GE[i] << " " << N_GI[i] << " " << total_HE[i] << " " << total_HI[i] << endl;
+        myfile << record_time_point[i] << " " << total_HEE[i] << " " << total_HIE[i] << " " << total_HEI[i] << " " << total_HII[i] << endl;
     }
     myfile.close();
-    myfile.open("membrane_potential_sample.txt");
+
+    myfile.open(".//outputs//model_full//V_info.txt")
     for (int i = 0; i < total_HI.size(); i++)
     {
         for (int j = 0; j < NE; j++)
