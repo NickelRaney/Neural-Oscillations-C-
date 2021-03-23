@@ -1,0 +1,87 @@
+﻿  model_SLN_full.cpp
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(88,12): warning C4101: 'val': unreferenced local variable
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(95,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(102,12): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(201,28): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(377,43): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(378,43): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(379,43): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(380,43): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(381,43): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(382,43): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(383,43): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(384,43): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(385,43): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(386,45): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(387,45): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(388,45): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(410,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(423,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(436,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(450,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(460,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(469,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(647,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(649,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(651,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(678,24): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(744,26): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(911,40): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(160,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(152): message : while compiling class template member function 'int Vector<int>::select(std::mt19937 &,std::uniform_real_distribution<double> &)'
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(477): message : see reference to function template instantiation 'int Vector<int>::select(std::mt19937 &,std::uniform_real_distribution<double> &)' being compiled
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(224): message : see reference to class template instantiation 'Vector<int>' being compiled
+  Generating code
+  2 of 351 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    3 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  NOModel_SLN_full.vcxproj -> D:\Code\C++\NOModels\x64\Release\NOModel_SLN_full.exe

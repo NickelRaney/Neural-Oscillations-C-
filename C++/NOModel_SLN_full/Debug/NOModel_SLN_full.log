@@ -1,0 +1,23 @@
+﻿  model_SLN_full.cpp
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(88,12): warning C4101: 'val': unreferenced local variable
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(95,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(102,12): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(407,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(420,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(433,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(447,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(457,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(466,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(644,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(646,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(648,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(675,24): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(741,26): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(749,20): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(885,23): warning C4018: '<': signed/unsigned mismatch
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(895,23): warning C4018: '<': signed/unsigned mismatch
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(160,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(152): message : while compiling class template member function 'int Vector<int>::select(std::mt19937 &,std::uniform_real_distribution<double> &)'
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(474): message : see reference to function template instantiation 'int Vector<int>::select(std::mt19937 &,std::uniform_real_distribution<double> &)' being compiled
+D:\Code\C++\NOModels\NOModel_SLN_full\model_SLN_full.cpp(224): message : see reference to class template instantiation 'Vector<int>' being compiled
+  NOModel_SLN_full.vcxproj -> D:\Code\C++\NOModels\Debug\NOModel_SLN_full.exe

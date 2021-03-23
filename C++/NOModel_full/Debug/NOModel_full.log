@@ -1,0 +1,18 @@
+﻿  model_full.cpp
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(71,12): warning C4101: 'val': unreferenced local variable
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(78,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(85,12): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(288,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(301,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(283,13): warning C4101: 'local_index': unreferenced local variable
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(387,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(389,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(400,24): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(423,26): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(502,23): warning C4018: '<': signed/unsigned mismatch
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(508,23): warning C4018: '<': signed/unsigned mismatch
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(143,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(135): message : while compiling class template member function 'int Vector<int>::select(std::mt19937 &,std::uniform_real_distribution<double> &)'
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(314): message : see reference to function template instantiation 'int Vector<int>::select(std::mt19937 &,std::uniform_real_distribution<double> &)' being compiled
+D:\Code\C++\NOModels\NOModel_full\model_full.cpp(199): message : see reference to class template instantiation 'Vector<int>' being compiled
+  NOModel_full.vcxproj -> D:\Code\C++\NOModels\Debug\NOModel_full.exe

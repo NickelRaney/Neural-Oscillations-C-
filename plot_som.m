@@ -2,7 +2,7 @@
 addpath(genpath(pwd));
 
 %%
-spike_som = load("outputs//model_SL_full//spike.txt");
+spike_som = load("outpuitspike.txt");
 index = spike_som(:,2)<300;
 spike_E = spike_som(index,:);
 index = logical((spike_som(:,2)>=300).*(spike_som(:,2)<=370));
@@ -15,7 +15,7 @@ scatter(spike_I(:,1)*1000, spike_I(:,2)+1,10,'.','b');
 hold on;
 scatter(spike_S(:,1)*1000, spike_S(:,2)+1,10,'.','g');
 hold on;
-xlim([9000,10000]);
+xlim([1000,3000]);
 
 %%
 spike_som = load("outputs//model_SL_full//spike.txt");
@@ -28,7 +28,7 @@ end
 
 param.ne = 300;
 param.ni = 100;
-param.duration = 3000;
+param.duration = 10000;
 param.sdbin = 2.5;
 
 param.spectrogram_timewindow = 200;
