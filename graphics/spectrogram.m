@@ -33,7 +33,7 @@ hcb=colorbar;
 ylabel(hcb,'(spikes/sec)^2/Hz','fontsize',11);
 set(gca,'fontsize',11);
 %set(gca,'xtick',[]);
-colormap turbo;
+%colormap turbo;
 %caxis([0 300]);
 %title(name);
 set(gcf,'Position',[10,10,1500,300]);

@@ -3,7 +3,7 @@ function [] = rasterplot(res,param)
 
 ne = param.ne;
 ni = param.ni;
-model = param.model;
+%model = param.model;
 duration = param.duration;
 figure
 for i=1:ne

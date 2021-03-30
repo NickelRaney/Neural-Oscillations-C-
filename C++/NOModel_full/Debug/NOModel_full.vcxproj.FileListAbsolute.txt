@@ -1,0 +1,2 @@
+C:\Users\raneyni\Documents\GitHub\Neural-Oscillations-Cpp\C++\NOModel_full\Debug\NOModel_full.exe
+C:\Users\raneyni\Documents\GitHub\Neural-Oscillations-Cpp\C++\NOModel_full\Debug\NOModel_full.pdb

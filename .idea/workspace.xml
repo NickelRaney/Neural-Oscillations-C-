@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5b7838b4-83c5-4067-990a-11a864dc7658" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/membrane_potential_sample_ref.txt" beforeDir="false" afterPath="$PROJECT_DIR$/membrane_potential_sample_ref.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model_som_leak.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/model_som_leak.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spike_info_ref.txt" beforeDir="false" afterPath="$PROJECT_DIR$/spike_info_ref.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trajectory_info_ref.txt" beforeDir="false" afterPath="$PROJECT_DIR$/trajectory_info_ref.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ProjectId" id="1q9x9GHI3oxaeQEuJrDE2CggUJG" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5b7838b4-83c5-4067-990a-11a864dc7658" name="Default Changelist" comment="" />
+      <created>1616505458912</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1616505458912</updated>
+      <workItem from="1616505461409" duration="5000" />
+    </task>
+    <servers />
+  </component>
+</project>

@@ -225,44 +225,26 @@ void spikeE(const int whichHit, Vector<double>& Clock, vector<int>& VE,
     Clock.switch_element(18, Ref * Eref.size());
     for (int i = 0; i < NE; i++)
     {
-        if (u(mt) < PEE && awakeE[i])
+        if (u(mt) < PEE)
         {
-            if (u(mt) < PEEN)
-            {
-                HEEN.push_back(i);
-            }
-            else
-            {
-                HEE.push_back(i);
-            }
+            HEEN.push_back(i);
+            HEE.push_back(i);  
         }
     }
     for (int i = 0; i < NI; i++)
     {
-        if (u(mt) < PIE && awakeI[i])
+        if (u(mt) < PIE)
         {
-            if (u(mt) < PIEN)
-            {
-                HIEN.push_back(i);
-            }
-            else
-            {
-                HIE.push_back(i);
-            }
+            HIEN.push_back(i);
+            HIE.push_back(i);
         }
     }
     for (int i = 0; i < NS; i++)
     {   
-        if (u(mt) < PSE && awakeS[i])
+        if (u(mt) < PSE)
         {
-            if (u(mt) < PSEN)
-            {
-                HSEN.push_back(i);
-            }
-            else
-            {
-                HSE.push_back(i);
-            }
+            HSEN.push_back(i);
+            HSE.push_back(i);
         }
     }
     Clock.switch_element(6, HitEE * HEE.size());
@@ -284,21 +266,21 @@ void spikeI(const int whichHit, Vector<double>& Clock, vector<int>& VI, Vector<i
     Clock.switch_element(19, Ref * Iref.size());
     for (int i = 0; i < NE; i++)
     {
-        if (u(mt) < PEI && awakeE[i])
+        if (u(mt) < PEI)
         {
             HEI.push_back(i);
         }
     }
     for (int i = 0; i < NI; i++)
     {
-        if (u(mt) < PII && awakeI[i])
+        if (u(mt) < PII)
         {
             HII.push_back(i);
         }
     }
     for (int i = 0; i < NS; i++)
     {
-        if (u(mt) < PSI && awakeS[i])
+        if (u(mt) < PSI)
         {
             HSI.push_back(i);
         }
@@ -318,21 +300,21 @@ void spikeS(const int whichHit, Vector<double>& Clock, vector<int>& VS, Vector<i
     Clock.switch_element(20, Ref * Sref.size());
     for (int i = 0; i < NE; i++)
     {
-        if (u(mt) < PES && awakeE[i])
+        if (u(mt) < PES)
         {
             HES.push_back(i);
         }
     }
     for (int i = 0; i < NI; i++)
     {
-        if (u(mt) < PIS && awakeI[i])
+        if (u(mt) < PIS)
         {
             HIS.push_back(i);
         }
     }
     for (int i = 0; i < NS; i++)
     {
-        if (u(mt) < PSS && awakeS[i])
+        if (u(mt) < PSS)
         {
             HSS.push_back(i);
         }
@@ -639,7 +621,7 @@ void update(vector<double>& time_spike, vector<int>& num_spike,
 int main()
 {
     ifstream inf;
-    inf.open("..//model_SLN_full_params.txt");
+    inf.open("..//model_SLN_full_params1.txt");
     string s;
     getline(inf, s);
     factor = StringToNum(s);
@@ -650,11 +632,11 @@ int main()
     getline(inf, s);
     NS = StringToNum(s);
     getline(inf, s);
-    SEE = StringToNum(s);//strength of postsynaptic connection
+    SEE = StringToNum(s)*0.8;//strength of postsynaptic connection
     getline(inf, s);
-    SIE = StringToNum(s);
+    SIE = StringToNum(s)*0.6666;
     getline(inf, s);
-    SSE = StringToNum(s);
+    SSE = StringToNum(s)*0.6666;
     getline(inf, s);
     SEI = StringToNum(s);
     getline(inf, s);
@@ -668,11 +650,11 @@ int main()
     getline(inf, s);
     SSS = StringToNum(s);
     getline(inf, s);
-    SEEN = StringToNum(s);
+    SEEN = StringToNum(s)*0.2;
     getline(inf, s);
-    SIEN = StringToNum(s);
+    SIEN = StringToNum(s)*0.333;
     getline(inf, s);
-    SSEN = StringToNum(s);
+    SSEN = StringToNum(s)*0.333;
 
     getline(inf, s);
     Level = StringToNum(s);//membrane potential
@@ -745,44 +727,47 @@ int main()
     getline(inf, s);
     terminate_time = StringToNum(s);
 
-    //cout << factor << endl;
-    //cout << NE << endl;
-    //cout << NI << endl;
-    //cout << NS << endl;
-    //cout << SEE << endl;
-    //cout << SIE << endl;
-    //cout << SSE << endl;
-    //cout << SEI << endl;
-    //cout << SII << endl;
-    //cout << SSI << endl;
-    //cout << SES << endl;
-    //cout << SIS << endl;
-    //cout << SSS << endl;
-    //cout << Level << endl;
-    //cout << PEE << endl;
-    //cout << PIE << endl;
-    //cout << PSE << endl;
-    //cout << PEI << endl;
-    //cout << PII << endl;
-    //cout << PSI << endl;
-    //cout << PES << endl;
-    //cout << PIS << endl;
-    //cout << PSS << endl;
-    //cout << kickE << endl;
-    //cout << kickI << endl;
-    //cout << kickS << endl;
-    //cout << HitEE << endl;
-    //cout << HitIE << endl;
-    //cout << HitSE << endl;
-    //cout << HitES << endl;
-    //cout << HitIS << endl;
-    //cout << HitSS << endl;
-    //cout << HitI << endl;
-    //cout << LeakE << endl;
-    //cout << LeakI << endl;
-    //cout << LeakS << endl;
-    //cout << Reverse << endl;
-    //cin.get();
+    cout << factor << endl;
+    cout << factor2 << endl;
+    cout << factor << endl;
+    cout << factor2 << endl;
+    cout << NE << endl;
+    cout << NI << endl;
+    cout << NS << endl;
+    cout << SEE << endl;
+    cout << SIE << endl;
+    cout << SSE << endl;
+    cout << SEI << endl;
+    cout << SII << endl;
+    cout << SSI << endl;
+    cout << SES << endl;
+    cout << SIS << endl;
+    cout << SSS << endl;
+    cout << Level << endl;
+    cout << PEE << endl;
+    cout << PIE << endl;
+    cout << PSE << endl;
+    cout << PEI << endl;
+    cout << PII << endl;
+    cout << PSI << endl;
+    cout << PES << endl;
+    cout << PIS << endl;
+    cout << PSS << endl;
+    cout << kickE << endl;
+    cout << kickI << endl;
+    cout << kickS << endl;
+    cout << HitEE << endl;
+    cout << HitIE << endl;
+    cout << HitSE << endl;
+    cout << HitES << endl;
+    cout << HitIS << endl;
+    cout << HitSS << endl;
+    cout << HitI << endl;
+    cout << LeakE << endl;
+    cout << LeakI << endl;
+    cout << LeakS << endl;
+    cout << Reverse << endl;
+    cin.get();
 
     //struct timeval t1, t2;
     //gettimeofday(&t1, NULL);
@@ -830,7 +815,7 @@ int main()
         i = 1;
     Vector<double> Clock;
     Clock.reserve(21);
-    //0, Edrive, 1, Idrive, 2, Sdrive, 3, LeakE, 4, LeakI, 5, LeakS, 6-14, H.., 18, Eref, 19, Iref, 20, Sref
+    //0, Edrive, 1, Idrive, 2, Sdrive, 3, LeakE, 4, LeakI, 5, LeakS, 6-17, H.., 18, Eref, 19, Iref, 20, Sref
     //6-17: [EE,IE,SE,EI,II,SI,ES,IS,SS,EEN,IEN, SEN]
 
     Clock.push_back(NE * kickE);
