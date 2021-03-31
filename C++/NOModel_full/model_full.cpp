@@ -382,7 +382,7 @@ int main()
     gettimeofday(&t1, NULL);*/
 
     ifstream inf;
-    inf.open("..//model_full_params.txt");
+    inf.open("..//model_full_params_small.txt");
     getline(inf, s);
     NE = StringToNum(s);
     getline(inf, s);
@@ -491,20 +491,20 @@ int main()
     cout << "I spike rate = " << (double)I_spike / (terminate_time * NI) << endl;
     int spike_count = time_spike.size();
 
-    myfile.open("..//outputs//model_full//spike.txt");
+    myfile.open("..//outputs//model_full//spike_small.txt");
     for (int i = 0; i < spike_count; i++)
     {
         myfile << time_spike[i] << "  " << num_spike[i] << endl;
     }
     myfile.close();
 
-    myfile.open("..//outputs//model_full//H.txt");
+    myfile.open("..//outputs//model_full//H_small.txt");
     for (int i = 0; i < total_HIE.size(); i++)
     {
         myfile << record_time_point[i] << " " << total_HEE[i] << " " << total_HIE[i] << " " << total_HEI[i] << " " << total_HII[i] << endl;
     }
     myfile.close();
-    myfile.open("..//outputs//model_full//V.txt");
+    myfile.open("..//outputs//model_full//V_small.txt");
     for (int i = 0; i < total_HIE.size(); i++)
     {
         for (int j = 0; j < NE; j++)

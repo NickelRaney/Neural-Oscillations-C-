@@ -1,0 +1,72 @@
+%the input res.V_e is a n*ne matrix
+function [P] = P_generation_statistics(res, param, bar)
+bar_e   = bar.e;
+bar_i   = bar.i;
+V_e     = res.V_e;
+V_i     = res.V_i;
+ne      = param.ne;
+ni      = param.ni;
+Mr      = param.Mr;
+M       = param.M;
+s_ee    = param.s_ee;
+s_ie    = param.s_ie;
+s_ei    = param.s_ei;
+s_ii    = param.s_ii;
+s_ei    = ceil((66*s_ei+bar_e*166)/(166-s_ei) - bar_e);
+s_ii    = ceil((66*s_ii+bar_i*166)/(166-s_ii) - bar_i);
+
+P.P_BE_Ex = zeros(ne+1, ne+1);
+P.P_GE_Ex = zeros(ne+1, ne+1);
+P.P_BE_E  = zeros(ne+1, ne+1);
+P.P_GE_E  = zeros(ne+1, ne+1);
+P.P_GE_I  = zeros(ne+1, ne+1);
+P.P_BI_Ex = zeros(ni+1, ni+1);
+P.P_GI_Ex = zeros(ni+1, ni+1);
+P.P_BI_E  = zeros(ni+1, ni+1);
+P.P_GI_E  = zeros(ni+1, ni+1);
+P.P_GI_I  = zeros(ni+1, ni+1);
+
+
+N_RE = sum(V_e==Mr-1,2);
+N_RI = sum(V_i==Mr-1,2);
+
+max_N_RE = max(N_RE);
+max_N_RI = max(N_RI);
+
+for i=1:max_N_RE+1
+    V_e_temp = V_e(N_RE==(i-1),:);
+    N_GE = sum(V_e_temp>bar_e);
+    max_N_GE = max(N_GE);
+    for j=1:max_N_GE+1
+        V_e_temp2 = V_e_temp(N_GE==(i-1),:);
+        PDF_e_temp = histogram(V_e_temp2,[-Mr-0.5:1:M+0.5],'normalization','probability');
+        PDF_e_temp = PDF_e_temp.Values;
+        % pause(0.1);
+        close;
+        P.P_BE_Ex(i,j) = PDF_e_temp(bar_e+Mr+1)/sum(PDF_e_temp(1: (bar_e+Mr+1)));
+        P.P_GE_Ex(i,j) = PDF_e_temp(M+Mr)/sum(PDF_e_temp(bar_e+Mr+2: M+Mr+1));
+        P.P_BE_E(i,j) = sum(PDF_e_temp((bar_e+Mr+1-s_ee+1):bar_e+Mr+1))/sum(PDF_e_temp(1:bar_e+Mr+1));
+        P.P_GE_E(i,j) = min(sum(PDF_e_temp((Mr+M+2-s_ee):M+Mr+1))/sum(PDF_e_temp(bar_e+Mr+2: M+Mr+1)),1);
+        P.P_GE_I(i,j) = min(sum(PDF_e_temp(bar_e+Mr+2:bar_e+Mr+s_ei+1))/sum(PDF_e_temp(bar_e+Mr+2: M+Mr+1)),1);
+    end
+end
+
+for i=1:max_N_RI+1
+    V_e_temp = V_e(N_RE==(i-1),:);
+    N_GE = sum(V_e_temp>bar_e);
+    max_N_GE = max(N_GE);
+    for j=1:max_N_GE+1
+        V_e_temp2 = V_e_temp(N_GE==(i-1),:);
+        PDF_e_temp = histogram(V_e_temp2,[-Mr-0.5:1:M+0.5],'normalization','probability');
+        PDF_e_temp = PDF_e_temp.Values;
+        % pause(0.1);
+        close;
+        P.P_BE_Ex(i,j) = PDF_e_temp(bar_e+Mr+1)/sum(PDF_e_temp(1: (bar_e+Mr+1)));
+        P.P_GE_Ex(i,j) = PDF_e_temp(M+Mr)/sum(PDF_e_temp(bar_e+Mr+2: M+Mr+1));
+        P.P_BE_E(i,j) = sum(PDF_e_temp((bar_e+Mr+1-s_ee+1):bar_e+Mr+1))/sum(PDF_e_temp(1:bar_e+Mr+1));
+        P.P_GE_E(i,j) = min(sum(PDF_e_temp((Mr+M+2-s_ee):M+Mr+1))/sum(PDF_e_temp(bar_e+Mr+2: M+Mr+1)),1);
+        P.P_GE_I(i,j) = min(sum(PDF_e_temp(bar_e+Mr+2:bar_e+Mr+s_ei+1))/sum(PDF_e_temp(bar_e+Mr+2: M+Mr+1)),1);
+    end
+end
+        
+        
