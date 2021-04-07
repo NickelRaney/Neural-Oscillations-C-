@@ -200,14 +200,14 @@ void spikeE(const int whichHit, Vector<double>& Clock, vector<int>& VE, Vector<i
     Clock.switch_element(6, Ref * Eref.size());
     for (int i = 0; i < NE; i++)
     {
-        if (u(mt) < PEE && awakeE[i])
+        if (u(mt) < PEE)
         {
             HEE.push_back(i);
         }
     }
     for (int i = 0; i < NI; i++)
     {
-        if (u(mt) < PIE && awakeI[i])
+        if (u(mt) < PIE)
         {
             HIE.push_back(i);
         }
@@ -225,14 +225,14 @@ void spikeI(const int whichHit, Vector<double>& Clock, vector<int>& VI, Vector<i
     Clock.switch_element(7, Ref * Iref.size());
     for (int i = 0; i < NE; i++)
     {
-        if (u(mt) < PEI && awakeE[i])
+        if (u(mt) < PEI)
         {
             HEI.push_back(i);
         }
     }
     for (int i = 0; i < NI; i++)
     {
-        if (u(mt) < PII && awakeI[i])
+        if (u(mt) < PII)
         {
             HII.push_back(i);
         }
@@ -356,7 +356,7 @@ void update(vector<double>& time_spike, vector<int>& num_spike,
             whichHit = HII.select(mt, u);
             if (awakeI[whichHit])
             {
-                VI[whichHit] += real2int(SII * (VE[whichHit] - Reverse) / (Level - Reverse), mt, u);
+                VI[whichHit] += real2int(SII * (VI[whichHit] - Reverse) / (Level - Reverse), mt, u);
                 if (VI[whichHit] < Reverse)
                     VI[whichHit] = Reverse;
             }
@@ -487,8 +487,11 @@ int main()
 
     update(time_spike, num_spike, record_time_point, total_HEE, total_HIE, total_HEI, total_HII, V_e_distribution, V_i_distribution, Clock, VE, VI, HEE, HEI, HIE, HII, Eref, Iref, awakeE, awakeI, terminate_time, mt, u);
 
-    cout << "E spike rate= " << (double)E_spike / (terminate_time * NE) << endl;
+    cout << "E spike rate = " << (double)E_spike / (terminate_time * NE) << endl;
     cout << "I spike rate = " << (double)I_spike / (terminate_time * NI) << endl;
+
+    cout << "E count = " << (double)E_spike << endl;
+    cout << "I count = " << (double)I_spike << endl;
     int spike_count = time_spike.size();
 
     myfile.open("..//outputs//model_full//spike_small.txt");

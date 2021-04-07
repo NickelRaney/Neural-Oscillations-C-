@@ -30,7 +30,7 @@ C:\Users\raneyni\Documents\GitHub\Neural-Oscillations-Cpp\C++\NOModel_full\model
 C:\Users\raneyni\Documents\GitHub\Neural-Oscillations-Cpp\C++\NOModel_full\model_full.cpp(389,21): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
 C:\Users\raneyni\Documents\GitHub\Neural-Oscillations-Cpp\C++\NOModel_full\model_full.cpp(400,24): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
 C:\Users\raneyni\Documents\GitHub\Neural-Oscillations-Cpp\C++\NOModel_full\model_full.cpp(423,26): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
-C:\Users\raneyni\Documents\GitHub\Neural-Oscillations-Cpp\C++\NOModel_full\model_full.cpp(492,40): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+C:\Users\raneyni\Documents\GitHub\Neural-Oscillations-Cpp\C++\NOModel_full\model_full.cpp(495,40): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
 C:\Users\raneyni\Documents\GitHub\Neural-Oscillations-Cpp\C++\NOModel_full\model_full.cpp(143,23): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
 C:\Users\raneyni\Documents\GitHub\Neural-Oscillations-Cpp\C++\NOModel_full\model_full.cpp(135): message : 在编译 类 模板 成员函数“int Vector<int>::select(std::mt19937 &,std::uniform_real_distribution<double> &)”时
 C:\Users\raneyni\Documents\GitHub\Neural-Oscillations-Cpp\C++\NOModel_full\model_full.cpp(314): message : 查看对正在编译的函数 模板 实例化“int Vector<int>::select(std::mt19937 &,std::uniform_real_distribution<double> &)”的引用

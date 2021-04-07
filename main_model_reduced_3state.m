@@ -92,8 +92,8 @@ two_param3.M        = 100;
 two_param3.Mr       = 66;
 two_param3.lambda_e = 1/7;
 two_param3.lambda_i = 1/7;
-two_param3.tau_ee   = 1.3;
-two_param3.tau_ie   = 0.95;
+two_param3.tau_ee   = 1.4;
+two_param3.tau_ie   = 1.2;
 two_param3.tau_i    = 4.5;
 two_param3.tau_r    = 2.5;
 
@@ -115,9 +115,9 @@ s=false;
 two_param3.duration = 3000;
 
 t = clock;  
-two_res3 = model_reduced_3state(s,two_param3, P);
+two_res4 = model_reduced_3state(s,two_param3, P);
 runtime3 = etime(clock,t);
-rasterplot(two_res3,two_param3);
+rasterplot(two_res4,two_param3);
 
 %% Plots
 

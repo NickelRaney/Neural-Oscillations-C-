@@ -1,5 +1,5 @@
 %the input res.V_e is a n*ne matrix
-function [P] = P_generation_statistics(res, param, bar)
+function [P] = P_generation_3state_statistics(res, param, bar)
 bar_e   = bar.e;
 bar_i   = bar.i;
 V_e     = res.V_e;
@@ -48,7 +48,7 @@ for i=1:max_N_RE+1
         P.P_BE_Ex(i,j) = PDF_e_temp(bar_e+Mr+1)/sum(PDF_e_temp(1: (bar_e+Mr+1)));
         P.P_GE_Ex(i,j) = PDF_e_temp(M+Mr)/sum(PDF_e_temp(bar_e+Mr+2: M+Mr+1));
         P.P_BE_E(i,j) = sum(PDF_e_temp((bar_e+Mr+1-s_ee+1):bar_e+Mr+1))/sum(PDF_e_temp(1:bar_e+Mr+1));
-        P.P_GE_E(i,j) = min(sum(PDF_e_temp((Mr+M+2-s_ee):M+Mr+1))/sum(PDF_e_temp(bar_e+Mr+2: M+Mr+1)),1);
+        P.P_GE_E(i,j) = min(sum(PDF_e_temp((Mr+M+1-s_ee):M+Mr))/sum(PDF_e_temp(bar_e+Mr+1: M+Mr)),1);
         P.P_GE_I(i,j) = min(sum(PDF_e_temp(bar_e+Mr+2:bar_e+Mr+s_ei+1))/sum(PDF_e_temp(bar_e+Mr+2: M+Mr+1)),1);
     end
     if isempty(find(P.P_BE_Ex(i,:)~=0&isnan(P.P_BE_Ex(i,:))==0))||isempty(find(P.P_GE_Ex(i,:)~=0&isnan(P.P_GE_Ex(i,:))==0))...

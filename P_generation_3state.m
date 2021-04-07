@@ -2,8 +2,8 @@
 addpath(genpath(pwd));
 
 %%
-bar.e            = 40;
-bar.i            = 40;
+bar.e            = 50;
+bar.i            = 50;
 param.ne         = 75;
 param.ni         = 25;
 param.p_ee       = 0.15;
