@@ -19,7 +19,7 @@ xlim([1000,3000]);
 title('SOM+NMDA+LEAK C++');
 
 %%
-spike_som = load("outputs//model_SLN_full//spike.txt");
+spike_som = load("outputs//model_full//spike.txt");
 spike = zeros(10000,400);
 for i=1:size(spike_som,1)
     neuron_i = spike_som(i,2);
