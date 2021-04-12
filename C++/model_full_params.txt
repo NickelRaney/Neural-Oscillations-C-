@@ -16,4 +16,4 @@ HitEE=1.3
 HitIE=0.95
 HitI=4.5
 Reverse=-66
-terminate_time=3
+terminate_time= 10
