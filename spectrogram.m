@@ -4,7 +4,6 @@ function [spectrogram]=spectrogram(sd,param)
 tw=param.spectrogram_timewindow;
 bin=param.sdbin;
 fr=param.frequency_range;
-duration = param.duration;
 initial_index = ceil((2.5)/ bin);
 N=tw/bin;
 kernel=(exp(-2*pi*i*bin/1000)*ones(1,N)).^(1:N)';
@@ -18,12 +17,10 @@ for j=1:num_spec
 end
 
 %smoothing
-norm(spectrogram,'fro')
 spectrogram1=conv2(spectrogram,ones(1,8)/8, 'valid');
 frs   = linspace(fr(1), fr(2), fr(2)-fr(1)+1);
 times = 0: num_spec;
 times = times *bin + 0;
-figure
 imagesc(times, frs, spectrogram1);
 set(gca,'YDir','normal');
 xlabel('Time(ms)','fontsize',11);
@@ -36,7 +33,6 @@ set(gca,'fontsize',11);
 colormap turbo;
 %caxis([0 300]);
 %title(name);
-set(gcf,'Position',[10,10,1500,300]);
 end
 
 

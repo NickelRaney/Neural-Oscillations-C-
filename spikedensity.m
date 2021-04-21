@@ -5,7 +5,6 @@ spike = res.spike;
 bin=param.sdbin;
 duration_time = param.duration;
 t=duration_time/bin;
-t
 sd.e=zeros(1,t+1);
 sd.i=zeros(1,t+1);
 for i=1:ne
