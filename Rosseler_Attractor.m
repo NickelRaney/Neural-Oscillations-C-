@@ -3,8 +3,8 @@
 ne = 300;
 ni = 100;
 duration = 10000;
-model = 'L';
-extra_name = '2SIE';
+model = 'B';
+extra_name = '';
 save_bool = true;
 bar = 50;
 
@@ -156,6 +156,92 @@ for i= 1:500
     end
     pause(0.005);
     delete(a);
+end
+%% Generate another version of Poincare_map
+
+figure;
+tr =[N_GE, N_GI, H_I];
+plane = [1,0,0; 0,1,0];
+mark = 1;
+
+gif_name = [save_path,'PM2-NGE-NGI-HI-',save_name,'.gif'];
+
+for i= 30:500
+    height = min(H_I) + i* (max(H_I)-min(H_I))/500;
+    pm2 = poincare_map2(tr,plane,height);
+    s=scatter(pm2(:,1), pm2(:,2), '.');
+    a=cell(1);
+    for j = 1:10:size(pm2,1)-1
+    a{j}=PlotLineArrow(gca, [pm2(j,1), pm2(j+1,1)], [pm2(j,2), pm2(j+1,2)], 'b', 'r');
+    end
+    xlabel('N_{GE}');
+    ylabel('N_{GI}');
+    title(['H_I= ', num2str(height)]);
+    F = getframe(gcf);
+    im = frame2im(F);
+    [I, map] =rgb2ind(im, 256);
+    if mark == 1
+        imwrite(I,map, gif_name, 'GIF', 'Loopcount',inf,'DelayTime',0.01);
+        mark = mark + 1;
+    else
+        imwrite(I,map, gif_name, 'WriteMode','append','DelayTime',0.01);
+    end
+    pause(0.005);
+    delete(s);  
+    for j=1:size(a,2)
+        delete(a{j});
+    end
+end
+
+%% Generate mean Poincare_map
+figure;
+tr =[N_GE, N_GI, H_I];
+plane = [1,0,0; 0,1,0];
+mark = 1;
+
+gif_name = [save_path,'PM2-mean-NGE-NGI-HI-',save_name,'.gif'];
+pm3 = [];
+for i= 30:500
+    height = min(H_I) + i* (max(H_I)-min(H_I))/500;
+    pm2 = poincare_map2(tr,plane,height);
+    X=pm2(1:size(pm2,1)-1,:)';
+    K=9;
+    [D,N] = size(X);
+    y=zeros(1,N);
+    X2 = sum(X.^2,1);
+    distance = repmat(X2,N,1)+repmat(X2',1,N)-2*X'*X;
+    size(distance)
+    [sorted,index] = sort(distance);
+    neighborhood = index(2:(1+K),:);
+    neighborhood = [1:1:size(pm2,1)-1;neighborhood];
+    for j=1:size(pm2,1)-1
+        pm3(j,1)=mean(pm2(neighborhood(:,j),1));
+        pm3(j,2)=mean(pm2(neighborhood(:,j),2));
+        pm3(j,3)=mean(pm2(neighborhood(:,j)+1,1));
+        pm3(j,4)=mean(pm2(neighborhood(:,j)+1,2));
+    end
+    s=scatter(pm2(:,1), pm2(:,2), '.');
+    a=cell(1);
+    for j = 1:5:size(pm3,1)-1
+        a{j}=PlotLineArrow(gca, [pm3(j,1), pm3(j,3)], [pm3(j,2), pm3(j,4)], 'b', 'r');
+    end
+    xlabel('N_{GE}');
+    ylabel('N_{GI}');
+    title(['H_I= ', num2str(height)]);
+    F = getframe(gcf);
+    im = frame2im(F);
+    [I, map] =rgb2ind(im, 256);
+    if mark == 1
+        imwrite(I,map, gif_name, 'GIF', 'Loopcount',inf,'DelayTime',0.01);
+        mark = mark + 1;
+    else
+        imwrite(I,map, gif_name, 'WriteMode','append','DelayTime',0.01);
+    end
+    pause(0.005);
+    delete(s);  
+    for j=1:size(a,2)
+        delete(a{j});
+    end
 end
 
 %% Generate GIF for V_E V_I
