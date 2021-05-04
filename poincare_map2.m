@@ -16,7 +16,6 @@ for i =21:size(heights,1)-20
         source = trajectory(i-1,:) * orth_proj;
         target = trajectory(i,:) * orth_proj;
         poincare_map = [poincare_map; source*ratio + target*(1-ratio)];
- 
         j=i;
     end
 end
