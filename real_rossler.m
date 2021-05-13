@@ -12,14 +12,22 @@ zlabel('z');
 
 %%
 pm=[];
+index=[1];
+max_height=[];
+count=1;
+
 for i=1:12000
     if x(i,1)<0 && x(i+1,1)>0 && x(i,2)<0;
+        count=count+1;
+        index=[index,i];
         coor=zeros(1,2);
         coor(1)=0;
         coor(2)=(-x(i,1)/(x(i+1,1)-x(i,1)))*x(i+1,2)+(x(i+1,1)/(x(i+1,1)-x(i,1)))*x(i,2);
         pm=[pm;coor];
+        max_height=[max_height,max(x(index(count-1):index(count),3))];
     end
 end
+
 
 %%
 scatter(pm(:,1),pm(:,2));
@@ -29,8 +37,10 @@ end
 %%
 scatter(-pm(1:203,2),-pm(2:204,2));
 %%
+scatter(max_height(1:203),max_height(2:204));
+%%
 function dx=rossler(a,x)
-    c=100;
+    c=0;
     dx=zeros(3,1);
     dx(1)=-x(2)-x(3)+c*(0.5-rand(1));
     dx(2)=x(1)+a(1)*x(2)+c*(0.5-rand(1));

@@ -4,8 +4,8 @@ ne = 300;
 ni = 100;
 duration = 10000;
 bar = 50;
-model = 'L';
-extra_name = '0.5xP';
+model = 'B';
+extra_name = '';
 load_name = ['M=',model,'-n=', num2str(ne+ni),'-t=', num2str(duration/1000)]; 
 model = ['model_', model];
 if isempty(extra_name) == 0
@@ -42,7 +42,7 @@ zlabel('H^E');
 ylabel('N_{GI}');
 xlabel('N_{GE}');
 grid on;
-view([-80, 30]);
+view([-80, 20]);
 set(gca,'fontsize',15,'fontname','Arial');
 hold on
 ShowSize = 30;
@@ -65,7 +65,7 @@ xlabel('N_{GE}');
 % ylim([30,80]);
 % zlim([2000,15000]);
 grid on;
-view([-40, 30]);
+view([-80, 20]);
 set(gca,'fontsize',15,'fontname','Arial');
 
 hold on
@@ -131,4 +131,33 @@ for i = 1:times
     delete(h1);
     delete(h2);
 end
-
+%%
+H_I_small = H_I(1:10:end);
+i=0;
+[m,p]=max(H_I_small(1:20));
+pos=[p];
+m_h=[m];
+c_p=p;
+while c_p+30<length(H_I_small)
+    [m,p]=max(H_I_small(c_p+10:c_p+30));
+    m_h=[m_h,m];
+    c_p=c_p+10+p-1;
+    pos=[pos,c_p];
+end
+%%
+scatter(m_h(1:end-1),m_h(2:end))
+%%
+H_E_small = H_E(1:10:end);
+i=0;
+[m,p]=max(H_E_small(1:20));
+pos=[p];
+m_h=[m];
+c_p=p;
+while c_p+30<length(H_E_small)
+    [m,p]=max(H_E_small(c_p+10:c_p+30));
+    m_h=[m_h,m];
+    c_p=c_p+10+p-1;
+    pos=[pos,c_p];
+end
+%%
+scatter(m_h(1:end-1),m_h(2:end))
