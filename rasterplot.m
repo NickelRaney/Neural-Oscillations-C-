@@ -3,16 +3,15 @@ function [] = rasterplot(res,param)
 
 ne = param.ne;
 ni = param.ni;
-figure
 for i=1:ne
-times = res.spike(:,i);
+times = res.spike(2:end,i)*1000;
 num   = size(times, 1);
 scatter(times, i*ones(num, 1),10,'.','r');
 hold on
 end
 
 for i=(ne+1):(ne+ni)
-times = res.spike(:,i);
+times = res.spike(2:end,i)*1000;
 %times = times(times > 1000);
 %times = times(times < 3000);
 num   = size(times, 1);
