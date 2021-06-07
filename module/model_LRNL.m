@@ -1,0 +1,256 @@
+function [res] = model_LRNL(param, P)
+% LowBase-3state-Reduce_Network
+ne = param.ne;
+ni = param.ni;
+p_ee = param.p_ee;
+p_ie = param.p_ie;
+p_ei = param.p_ei;
+p_ii = param.p_ii;
+tau_ee = 1000/param.tau_ee;
+tau_ie = 1000/param.tau_ie;
+tau_ei = 1000/param.tau_ei;
+tau_ii = 1000/param.tau_ii;
+% tau_ri = 1000/param.tau_ri;
+% tau_re = 1000/param.tau_re;
+% gLeak = -1 + (1 / 2.71828)^(1 / param.factor_Leak);
+duration_time=param.duration;
+c = zeros(1, 10);
+c(1) = ne * param.lambda_e;
+c(2) = ni * param.lambda_i;
+if param.factor_Leak==inf
+    c(3)=0;
+    c(4)=0;
+else
+c(3) = ne * 1000 * param.factor_Leak/ param.LeakE;
+c(4) = ni * 1000 * param.factor_Leak/ param.LeakI;
+end
+delta_time = param.delta_time/1000;
+%c is the clock variable, with elements representing 1.E drive 2.I drive
+%3.E leak 4.I leak 5.HEE 6.HEI 7.HIE 8.HII 9.E ref 10.I ref
+
+res.spike=zeros(9000,ne+ni);
+VE = zeros(1,ne);
+VI = zeros(1,ni);
+HEE = zeros(1,100000);
+HIE = zeros(1,100000);
+HEI = zeros(1,100000);
+HII = zeros(1,100000);
+
+% Eref = zeros(1, ne+1);
+% Iref = zeros(1, ni+1);
+% 
+% awakeE = ones(1, ne);
+% awakeI = ones(1, ni);
+spikeE = 0;
+spikeI = 0;
+t = 0;
+t_temp  = t;
+res.HE = zeros(ceil(duration_time/delta_time)+1,ne+ni);
+res.HI = zeros(ceil(duration_time/delta_time)+1,ne+ni);
+res.VE = zeros(ceil(duration_time/delta_time)+1,ne);
+res.VI = zeros(ceil(duration_time/delta_time)+1,ni);
+res.time =zeros(ceil(duration_time/delta_time)+1,1);
+index1 = 1;
+t_count = 0;
+while t < duration_time
+    delta = log(1-rand(1)) / sum(c);
+    t = t-delta;
+    t_temp = t_temp - delta;
+    t_count = t_count -delta;
+    if t_count > 0.1
+        disp(t);
+        t_count = 0;
+    end
+    if t_temp > delta_time
+        HEE_temp = HEE(2: HEE(1)+1);
+        HIE_temp = HIE(2: HIE(1)+1);
+        HEI_temp = HEI(2: HEI(1)+1);
+        HII_temp = HII(2: HII(1)+1);
+        res.HE(index1,1:(ne)) = histcounts(HEE_temp,1:(ne+1));
+        res.HE(index1,(ne+1):(ne+ni)) = histcounts(HIE_temp,1:(ni+1));
+        res.HI(index1,1:ne) = histcounts(HEI_temp,1:(ne+1));
+        res.HI(index1,(ne+1):(ne+ni)) = histcounts(HII_temp,1:(ni+1));
+        res.VE(index1,:) = VE;
+        res.VI(index1,:) = VI;
+        res.time(index1) = t;
+        index1  = index1 +1;
+        t_temp = 0;
+    end
+    N_LBE                             = sum(VE<0);
+    N_LBI                             = sum(VI<0);
+    N_BE                              = sum(VE==0);
+    N_BI                              = sum(VI==0);
+    index = find_index(c);      %type of events
+    
+    switch index
+        case 1
+            whichhit = ceil(rand(1)*ne);
+            if VE(whichhit) ==-1 && rand(1) < P.P_LBE_Ex(N_LBE+1,N_BE+1)
+                VE(whichhit) = VE(whichhit) + 1;
+            elseif VE(whichhit) ==0 && rand(1) < P.P_BE_Ex(N_LBE+1,N_BE+1)
+                VE(whichhit) = VE(whichhit) + 1;
+            elseif VE(whichhit) ==1 && rand(1) < P.P_GE_Ex(N_LBE+1,N_BE+1)
+                VE(whichhit) = -1;
+                spikeE = 1;
+            end
+        case 2
+            whichhit = ceil(rand(1)*ni);
+            if VI(whichhit) ==-1 && rand(1) < P.P_LBI_Ex(N_LBI+1,N_BI+1)
+                VI(whichhit) = VI(whichhit) + 1;
+            elseif VI(whichhit) ==0 && rand(1) < P.P_BI_Ex(N_LBI+1,N_BI+1)
+                VI(whichhit) = VI(whichhit) + 1;
+            elseif VI(whichhit) ==1 && rand(1) < P.P_GI_Ex(N_LBI+1,N_BI+1)
+                VI(whichhit) = -1;
+                spikeI = 1;
+            end
+        case 3
+%             whichhit = ceil(rand(1)*ne);
+%             if awakeE(whichhit) == 1
+%                 Leak = gLeak * VE(whichhit);
+%                 VE(whichhit) = VE(whichhit) + real2int(Leak);
+%             end
+        case 4
+%             whichhit = ceil(rand(1)*ni);
+%             if awakeI(whichhit) == 1
+%                 Leak = gLeak * VI(whichhit);
+%                 VI(whichhit) = VI(whichhit) + real2int(Leak);
+%             end
+        case 5
+            index = ceil(rand(1)*HEE(1))+1;
+            whichhit = HEE(index);
+            HEE(index) = HEE(HEE(1)+1);
+            HEE(HEE(1)+1) = 0;
+            HEE(1)=HEE(1)-1;
+            if VE(whichhit) ==-1 && rand(1) < P.P_LBE_E(N_LBE+1,N_BE+1)
+                VE(whichhit) = VE(whichhit) + 1;
+            elseif VE(whichhit) ==0 && rand(1) < P.P_BE_E(N_LBE+1,N_BE+1)
+                VE(whichhit) = VE(whichhit) + 1;
+            elseif VE(whichhit) ==1 && rand(1) < P.P_GE_E(N_LBE+1,N_BE+1)
+                VE(whichhit) = -1;
+                spikeE = 1;
+            end
+            c(5) = c(5)-tau_ee;
+        case 6
+            index = ceil(rand(1)*HIE(1))+1;
+            whichhit = HIE(index);
+            HIE(index) = HIE(HIE(1)+1);
+            HIE(HIE(1)+1) = 0;
+            HIE(1)=HIE(1)-1;
+            if VI(whichhit) ==-1 && rand(1) < P.P_LBI_E(N_LBI+1,N_BI+1)
+                VI(whichhit) = VI(whichhit) + 1;
+            elseif VI(whichhit) ==0 && rand(1) < P.P_BI_E(N_LBI+1,N_BI+1)
+                VI(whichhit) = VI(whichhit) + 1;
+            elseif VI(whichhit) ==1 && rand(1) < P.P_GI_E(N_LBI+1,N_BI+1)
+                VI(whichhit) = -1;
+                spikeI = 1;
+            end
+            c(6) = c(6)-tau_ie;
+        case 7
+            index = ceil(rand(1)*HEI(1))+1;
+            whichhit = HEI(index);
+            HEI(index) = HEI(HEI(1)+1);
+            HEI(HEI(1)+1) = 0;
+            HEI(1)=HEI(1)-1;
+            if VE(whichhit) ==0 && rand(1) < P.P_BE_I(N_LBE+1,N_BE+1)
+                VE(whichhit) = -1;
+            elseif VE(whichhit) ==1 && rand(1) < P.P_GE_I(N_LBE+1,N_BE+1)
+                VE(whichhit) = 0;
+            end
+            c(7) = c(7)-tau_ei;
+        case 8
+            index = ceil(rand(1)*HII(1))+1;
+            whichhit = HII(index);
+            HII(index) = HII(HII(1)+1);
+            HII(HII(1)+1) = 0;
+            HII(1)=HII(1)-1;
+            if VI(whichhit) ==0 && rand(1) < P.P_BI_I(N_LBI+1,N_BI+1)
+                VI(whichhit) = -1;
+            elseif VI(whichhit) ==1 && rand(1) < P.P_GI_I(N_LBI+1,N_BI+1)
+                VI(whichhit) = 0;
+            end
+            c(8) = c(8)-tau_ii;
+        case 9
+%             index = ceil(rand(1)*Eref(1))+1;
+%             whichhit = Eref(index);
+%             Eref(index) = Eref(Eref(1)+1);
+%             Eref(Eref(1)+1) = 0;
+%             Eref(1)=Eref(1)-1;
+%             awakeE(whichhit) = 1;
+%             c(9) = c(9) - tau_re;
+        case 10
+%             index = ceil(rand(1)*Iref(1))+1;
+%             whichhit = Iref(index);
+%             Iref(index) = Iref(Iref(1)+1);
+%             Iref(Iref(1)+1) = 0;
+%             Iref(1)=Iref(1)-1;
+%             awakeI(whichhit) = 1;
+%             c(10) = c(10) - tau_ri;
+    end
+    if spikeE == 1
+        spikeE = 0;
+%         Eref(Eref(1)+2)=whichhit;
+%         Eref(1) = Eref(1)+1;
+%         c(9) = c(9) + tau_re;
+        p = -rand(1, ne) + p_ee;
+        HEE_new = find(p>0);
+        HEE(HEE(1)+2:HEE(1)+1+length(HEE_new)) = HEE_new;
+        HEE(1)=HEE(1)+length(HEE_new);
+        p = -rand(1, ni) + p_ie;
+        HIE_new = find(p>0);
+        HIE(HIE(1)+2:HIE(1)+1+length(HIE_new)) = HIE_new;
+        HIE(1)=HIE(1)+length(HIE_new);
+        c(5) = tau_ee * HEE(1);
+        c(6) = tau_ie* HIE(1);
+        res.spike(1,whichhit)=res.spike(1,whichhit)+1; %write down the spike time
+        res.spike(res.spike(1,whichhit)+1,whichhit)=t;
+    end
+    if spikeI == 1
+        spikeI = 0;
+%         VI(whichhit) = 0;
+%         awakeI(whichhit) = 0;
+%         Iref(Iref(1)+2)=whichhit;
+%         Iref(1) = Iref(1)+1;
+%         c(10) = c(10) + tau_ri;
+        p = -rand(1, ne) + p_ei;
+        HEI_new = find(p>0);
+        HEI(HEI(1)+2:HEI(1)+1+length(HEI_new)) = HEI_new;
+        HEI(1)=HEI(1)+length(HEI_new);
+        p = -rand(1, ni) + p_ii;
+        HII_new = find(p>0);
+        HII(HII(1)+2:HII(1)+1+length(HII_new)) = HII_new;
+        HII(1)=HII(1)+length(HII_new);
+        c(7) = tau_ei * HEI(1);
+        c(8) = tau_ii * HII(1);
+        res.spike(1,whichhit+ne)=res.spike(1,whichhit+ne)+1; %write down the spike time
+        res.spike(res.spike(1,whichhit+ne)+1,whichhit+ne)=t;
+    end
+end
+res.HE = res.HE(1:index1-1,:);
+res.HI = res.HI(1:index1-1,:);
+res.VE = res.VE(1:index1-1,:);
+res.VI = res.VI(1:index1-1,:);
+res.time = res.time(1:index1-1);
+end
+
+
+function index = find_index(c)
+l=length(c);
+s = sum(c);
+index = 1;
+temp = rand(1);
+frac = c(1) / s;
+while frac < temp && index <= l
+    index = index + 1;
+    frac = frac + c(index) / s;
+end
+end
+
+
+% function a = real2int(b)
+% f = floor(b);
+% if rand(1) < b - f
+%     a = f + 1;
+% else
+%     a = f;
+% end
+% end

@@ -1,3 +1,6 @@
+%% Setting paths
+addpath('module');
+
 %%
 param.ne       = 300;
 param.ni       = 100;
@@ -9,6 +12,10 @@ param.s_ee     = 5;
 param.s_ie     = 2;
 param.s_ei     = 4.91;
 param.s_ii     = 4.91;
+param.ns_ee    = 1;
+param.ns_ie    = 1;
+param.ns_ei    = 1;
+param.ns_ii    = 1;
 param.tau_ri   = 2.5;
 param.tau_re   = 2.5;
 param.M        = 100;
@@ -33,26 +40,27 @@ param.frequency_range = [5,100];
 % Setting Parameters
 save_bool = true;
 param1 = param;
+param1.factor_Leak = inf;
 param1.M = 1000;
 param1.Mr = 660;
-param1.lambda_e = 70000;
-param1.lambda_i = 70000;
-param1.p_ee     = 1;
-param1.p_ie     = 1;
-param1.p_ei     = 1;
-param1.p_ii     = 1;
+extra_name = 'p=1-M=1000';
+param.p_ee     = 1;
+param.p_ie     = 1;
+param.p_ei     = 1;
+param.p_ii     = 1;
 param1.s_ee     = 7.5;
 param1.s_ie     = 10;
-param1.s_ei     = 25;
-param1.s_ii     = 20;
-extra_name = 'p=1-M=1000';
-bar = 50;
+param.lambda_e = 70000;
+param.lambda_i = 70000;
+param1.s_ei   = 25.0;
+param1.s_ii   = 19.6;
+bar = 500;
 tic;
 res = model_L(param1);
 toc;
 
 %%
-if param.factor_Leak == inf
+if param1.factor_Leak == inf
     model ='B';
 else
     model = 'L';
@@ -144,7 +152,7 @@ if save_bool
     saveas(gcf,[plots_save_path, 'Spec-', save_name,'.png']);
     saveas(gcf,[plots_save_path, 'Spec-', save_name,'.fig']);
 end
-
+%%
 % Trajectory
 subplot(1,2,1);
 a=plot3(res.NGE, res.NGI, res.tHI,'b');
@@ -154,6 +162,7 @@ ylabel('N_{GI}');
 zlabel('H_I');
 view([-110,  30]);
 grid on;
+set(gca,'fontsize',15,'fontname','Arial');
 subplot(1,2,2);
 a=plot3(res.NGE, res.NGI, res.tHE,'b');
 a.Color(4)=0.06;
@@ -163,7 +172,8 @@ zlabel('H_E');
 grid on;
 view([-110,  30]);
 set(gcf,'Position',[10,10,1400,600]);
-sgtitle(['Trajectory-', save_name]);
+%sgtitle(['Trajectory-', save_name]);
+set(gca,'fontsize',15,'fontname','Arial');
 if save_bool
     saveas(gcf,[save_path, 'Tr-', save_name,'.png']);
     saveas(gcf,[save_path, 'Tr-', save_name,'.fig']);

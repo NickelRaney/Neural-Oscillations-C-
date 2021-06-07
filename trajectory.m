@@ -2,27 +2,26 @@
 
 ne = 300;
 ni = 100;
-duration = 10000;
+duration = 3000;
 bar = 50;
-model = 'B';
+model = 'L';
 extra_name = '';
 load_name = ['M=',model,'-n=', num2str(ne+ni),'-t=', num2str(duration/1000)]; 
 model = ['model_', model];
 if isempty(extra_name) == 0
     load_name = [load_name,'-', extra_name];
 end
-H_path = ['outputs//', model, '//', load_name,'//data//H.txt'];
-V_path = ['outputs//', model, '//', load_name,'//data//V.txt'];
+save_path = ['outputs//',model,'//',load_name];
+load([save_path,'//','data.mat']);
 
-% Load H, V
-H = load(H_path);
-V = load(V_path);
-H_E = H(:,2) + H(:,3);
-H_I = H(:,4) + H(:,5);
-V_E = V(:, 1:ne);
-V_I = V(:, 1+ne: ni + ne);
-N_GE = sum(V_E > bar, 2);
-N_GI = sum(V_I > bar, 2);
+
+%% Load H, V
+V_E = res.VE;
+V_I = res.VI;
+H_I = res.tHI;
+H_E = res.tHE;
+N_GE = res.NGE;
+N_GI = res.NGI;
 
 % Discard first 100
 V_E = V_E(100:end, :);
@@ -56,7 +55,7 @@ end
 %%
 figure('Name','TrajIllus')
 set(gcf,'Position',[10,10,1000,1000]);
-a=plot3(N_GE, N_GI, H_I,'b');
+a=plot3(N_GE, N_GI, HI,'b');
 a.Color(4)=0.08;
 zlabel('H^I');
 ylabel('N_{GI}');
@@ -73,7 +72,7 @@ ShowSize = 30;
 
 for tInd = 100:length(N_GE) - ShowSize
     Win = tInd:tInd+ShowSize-1;
-    a1 = plot3(N_GE(Win), N_GI(Win), H_I(Win), 'r','LineWidth',3);
+    a1 = plot3(N_GE(Win), N_GI(Win), HI(Win), 'r','LineWidth',3);
     pause(0.02)
     delete(a1)
 end
@@ -131,7 +130,34 @@ for i = 1:times
     delete(h1);
     delete(h2);
 end
-%%
+%% Poincare
+model = ['model_','B'];
+folder = 'RefPoint3_P=1';
+path1 = ['.\\outputs\\', model,'\\',folder];
+filefolder = fullfile(path1);
+dirOut = dir(fullfile(filefolder, 'M=*.*'));
+filenames = {dirOut.name};
+num = size(filenames,2);
+cd(path1);
+for j =1:num
+ i
+cd(filenames{j});
+load('data');
+V_E = res.VE;
+V_I = res.VI;
+H_I = res.tHI;
+H_E = res.tHE;
+N_GE = res.NGE;
+N_GI = res.NGI;
+
+% Discard first 100
+V_E = V_E(100:end, :);
+V_I = V_I(100:end, :);
+H_I = H_I(100:end);
+H_E = H_E(100:end);
+N_GE = N_GE(100:end);
+N_GI = N_GI(100:end);
+
 H_I_small = H_I(1:10:end);
 i=0;
 [m,p]=max(H_I_small(1:20));
@@ -144,9 +170,12 @@ while c_p+30<length(H_I_small)
     c_p=c_p+10+p-1;
     pos=[pos,c_p];
 end
-%%
-scatter(m_h(1:end-1),m_h(2:end))
-%%
+figure;
+scatter(m_h(1:end-1),m_h(2:end));
+title(['pm-HI-', filenames{j}]);
+saveas(gcf,'pm_HI.png');
+saveas(gcf,'pm_HI.fig');
+
 H_E_small = H_E(1:10:end);
 i=0;
 [m,p]=max(H_E_small(1:20));
@@ -159,5 +188,13 @@ while c_p+30<length(H_E_small)
     c_p=c_p+10+p-1;
     pos=[pos,c_p];
 end
-%%
+figure;
 scatter(m_h(1:end-1),m_h(2:end))
+title(['pm-HE-', filenames{j}]);
+saveas(gcf,'pm_HE.png');
+saveas(gcf,'pm_HE.fig');
+cd ..;
+end
+cd ..;
+cd ..;
+cd ..;

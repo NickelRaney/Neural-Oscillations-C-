@@ -10,7 +10,7 @@ xlabel('x');
 ylabel('y');
 zlabel('z');
 
-%%
+
 pm=[];
 index=[1];
 max_height=[];
@@ -29,16 +29,15 @@ for i=1:12000
 end
 
 
-%%
+
 scatter(pm(:,1),pm(:,2));
 for j = 1:10:size(pm,1)-1
     PlotLineArrow(gca, [pm(j,1), pm(j+1,1)], [pm(j,2), pm(j+1,2)], 'b', 'r');
 end
-%%
+
 scatter(-pm(1:203,2),-pm(2:204,2));
-%%
 scatter(max_height(1:203),max_height(2:204));
-%%
+
 function dx=rossler(a,x)
     c=0;
     dx=zeros(3,1);
