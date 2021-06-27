@@ -44,6 +44,8 @@ t_temp=0;
 
 res.peak_e=zeros(duration/delta_time,30);
 res.peak_i=zeros(duration/delta_time,30);
+res.npi = zeros(duration/delta_time,1);
+res.npe = zeros(duration/delta_time,1);
 res.h=zeros(duration/delta_time,4);
 index_e=1;
 index_i=1;
@@ -56,6 +58,8 @@ while t < duration
         index1=round(t/delta_time);
         res.peak_e(index1,:)=peak_e(:)';
         res.peak_i(index1,:)=peak_i(:)';
+        res.npi(index1) = npi;
+        res.npe(index1) = npe;
         res.h(index1,:)=h(:)';
         t_temp=0;
     end
