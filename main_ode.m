@@ -6,7 +6,7 @@ param.ni       = 100;
 
 param.s_ee     = 5*0.15;
 param.s_ie     = 2*0.5;
-param.s_ei     = 4.91*0.42;
+param.s_ei     = 4.91*0.5;
 param.s_ii     = 4.91*0.4;
 
 
