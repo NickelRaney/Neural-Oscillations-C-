@@ -3,20 +3,10 @@ addpath('module');
 %%
 param.ne       = 300;
 param.ni       = 100;
-
 param.s_ee     = 5*0.15;
 param.s_ie     = 2*0.5;
-
-
 param.s_ei     = 4.91*0.5;
-
-param.s_ei     = 4.91*0.41;
-
-
-param.s_ei     = 4.91*0.45;
-
 param.s_ii     = 4.91*0.4;
-
 
 param.M        = 100;
 param.Mr       = 66;
@@ -27,12 +17,13 @@ param.tau_ie   = 0.95;
 param.tau_ei    = 4.5;
 param.tau_ii    = 4.5;
 param.duration = 1;
-param.delta_time = 0.1;
-param.dt = 0.025;
+param.delta_time = 1;
+param.dt = 0.01;
 %%
 tic;
 res=model_ode(param);
 toc;
 
 %%
+s_path=[];
 ode_video(param,res, s_path)

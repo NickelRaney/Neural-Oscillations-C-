@@ -83,8 +83,8 @@ close(writeObj);
     function x = phinv(v,h)
         % note: assume original distribution has zero mean so that there is
         % no m variable.
-        h=min(h,0.9987);
-        h=max(h,0.0013);
+        h=min(h,0.9999);
+        h=max(h,0.0001);
         x = erfinv((2*h-1))*sqrt(2)*sqrt(v);
     end
 end
