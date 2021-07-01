@@ -10,9 +10,6 @@ s_ie=param.s_ie;
 s_ei=param.s_ei;
 s_ii=param.s_ii;
 
-
-
-
 lambda_e=param.lambda_e;
 lambda_i=param.lambda_i;
 
@@ -23,10 +20,12 @@ M=param.M;
 %record 10 peaks maximally. The first row is the mean of each peak, the
 %second is the variance while the third is the share of each peak in total
 %population.
+
 peak_e=zeros(3,10);
 peak_i=zeros(3,10);
 
 %npe&i record the number of peaks.
+
 npe=1;
 npi=1;
 peak_e(3,1)=1;
@@ -68,7 +67,7 @@ end
     function update()
         %峰的运动一共分为三种情况。对于每个峰，我们认为它只有3sigma宽。3sigma以外的分布不考虑。
         %case1的含义是只有一个峰，且右边界（mean+3*sigma）<M
-        %当峰逐渐右移，右边界超过M，来到case2。该状态代表一部分神经元放电，如果下一个dt里有神经元放电（dh>0）,则保持case2
+        %当峰逐渐右移，右边界超过M，来到case2。该状态代表一部分神经元放电，如果下一个dt里有神经元放电（dh>0）,则保持case2。
         %case2会一直持续到HI抑制强于向右推的力量，峰会向左移动，一旦dh<0，生成一个新的小峰，并更新到case3，保持case3一直到dh重新大于0。
         %当主峰全部过去（peak第一列对应的峰），所有小峰按照相同的方差均值合并成一个主峰。
         %注意！所有小峰都是完整的高斯，但是主峰不是！主峰在case2和3里会是一个右边截断一部分的高斯！通过peak（3,1）即主峰剩余的百分比可以计算
@@ -94,7 +93,7 @@ end
                     peak_e(3,1)=h_cumulant;
                     h(1)=h(1)+dh*ne;
                     h(2)=h(2)+dh*ne;
-                    if peak_e(3,1)<0.0013
+                    if peak_e(3,1)<0.0001
                         [m_new,v_new]=newpeak(peak_e(2,1),peak_e(3,1),peak_e(3,npe+1)+peak_e(3,1));
                         peak_e(1,1)=m_new;
                         peak_e(2,1)=v_new;
@@ -112,6 +111,8 @@ end
                 else
                     npe=npe+1;
                     [m_new,v_new]=newpeak(peak_e(2,1),peak_e(3,1),peak_e(3,npe)+peak_e(3,1));
+                    peak_e(3,1)
+                    peak_e(3,npe)+peak_e(3,1)
                     peak_e(1,npe)=m_new;
                     peak_e(2,npe)=v_new;
                     index_e = 3;
@@ -148,7 +149,7 @@ end
                     peak_i(3,1)=h_cumulant;
                     h(3)=h(3)+dh*ni;
                     h(4)=h(4)+dh*ni;
-                    if peak_i(3,1)<0.0013
+                    if peak_i(3,1)<0.0001
                         [m_new,v_new]=newpeak(peak_i(2,1),peak_i(3,1),peak_i(3,npi+1)+peak_i(3,1));
                         peak_i(1,1)=m_new;
                         peak_i(2,1)=v_new;
@@ -193,8 +194,8 @@ end
     function x = phinv(v,h)
         % note: assume original distribution has zero mean so that there is
         % no m variable.
-        h=min(h,0.9987);
-        h=max(h,0.0013);
+        h=min(h,0.9999);
+        h=max(h,0.0001);
         x = erfinv((2*h-1))*sqrt(2)*sqrt(v);
     end
 

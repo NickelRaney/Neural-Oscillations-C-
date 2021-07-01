@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 save_bool = true;
 param1 = param;
 param1.factor_Leak = inf;
@@ -38,3 +39,9 @@ for i =2:4
     subplot(4,1,i);
     xlim([2,3]);
 end
+=======
+for i=1:4
+    subplot(4,1,i);
+    xlim([1500,2000]);
+end
+>>>>>>> Stashed changes

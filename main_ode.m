@@ -6,7 +6,7 @@ param.ni       = 100;
 
 param.s_ee     = 5*0.15;
 param.s_ie     = 2*0.5;
-param.s_ei     = 4.91*0.41;
+param.s_ei     = 4.91*0.45;
 param.s_ii     = 4.91*0.4;
 
 
@@ -25,3 +25,6 @@ param.dt = 0.025;
 tic;
 res=model_ode(param);
 toc;
+
+%%
+ode_video(param,res, s_path)
