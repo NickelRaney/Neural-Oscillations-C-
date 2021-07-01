@@ -9,7 +9,12 @@ ax1 = subplot(2,1,1);
 ax2 = subplot(2,1,2);
 writeObj = VideoWriter([save_path,'ode.avi']);
 open(writeObj);
+xes = -66:0.01:100;
+yes = zeros(1,size(xes,2));
+xis = xes;
+yis = yes;
 for i=1:size(npis)
+    yes = yes*0;
     npe = npes(i);
     npi = npis(i);
     peak_e = peak_es(i,:);
@@ -18,85 +23,49 @@ for i=1:size(npis)
     peak_i = reshape(peak_i,[3,10]);
     x_e = phinv(peak_e(2,1), peak_e(3,1));
     x_e_l = phinv(peak_e(2,1), 0.0013);
-    xe1 = x_e_l:0.001:x_e;
-    ye1 = exp(-xe1.^2./(2*peak_e(2,1)))./(sqrt(2*pi*peak_e(2,1)));
-    xe1 = xe1 + peak_e(1,1);
-    plot(ax1,xe1,ye1,'Color','r');
+    index = (xes>(x_e_l+peak_e(1,1))) &(xes<(x_e + peak_e(1,1)));
+    yes(index) = exp(-(xes(index)-peak_e(1,1)).^2./(2*peak_e(2,1)))./(sqrt(2*pi*peak_e(2,1)));
     if npe > 1
         for j=2:npe
-            hold(ax1, 'on');
             m = peak_e(1,j);
             v = peak_e(2,j);
             r = peak_e(3,j);
-            xe = -3*sqrt(v):0.01:3*sqrt(v);
-            ye = exp(-xe.^2./(2*v))./(sqrt(2*pi*v));
-            xe = xe + m;
-            ye = ye * r;
-            plot(ax1,xe,ye,'Color','r');
+            index = (xes>(m-3*sqrt(v))) &(xes<(m+3*sqrt(v)));
+            yes(index) = yes(index) + r * exp(-(xes(index)-m).^2./(2*v))./(sqrt(2*pi*v));
         end
     end
     r2 = peak_e(3,npe+1);
     if r2>0
-        hold(ax1,'on');
         x_e_u = phinv(peak_e(2,1),peak_e(3,1)+r2);
-        xe2 = x_e:0.01:x_e_u;
-        ye2 = exp(-xe2.^2./(2*peak_e(2,1)))./(sqrt(2*pi*peak_e(2,1)));
-        xe2 =xe2-x_e;
-        plot(ax1,xe2,ye2,'Color','r');
-        hold(ax1,'on');
-        a1 = ye2(1);
-        a2 = ye2(end);
-        a1 = 0:0.0001:a1;
-        a2 = 0:0.0001:a2;
-        b1 = ones(1,size(a1,2));
-        b2 = ones(1,size(a2,2));
-        plot(ax1,0*b1,a1,'Color','r');
-        hold(ax1,'on');
-        plot(ax1,(x_e_u-x_e)*b2,a2,'Color','r');
+        index = (xes>0)&(xes<(x_e_u-x_e));
+        yes(index) = yes(index) + exp(-(xes(index)+x_e).^2./(2*peak_e(2,1)))./(sqrt(2*pi*peak_e(2,1)));
+        
     end
+    plot(ax1,xes,yes,'Color','r');
     xlim(ax1,[-66,100]);
     ylim(ax1,[0,0.2]);
     
+    yis = yis*0;
     x_i = phinv(peak_i(2,1), peak_i(3,1));
     x_i_l = phinv(peak_i(2,1), 0.0013);
-    xi1 = x_i_l:0.001:x_i;
-    yi1 = exp(-xi1.^2./(2*peak_i(2,1)))./(sqrt(2*pi*peak_i(2,1)));
-    xi1 = xi1 + peak_i(1,1);
-    plot(ax2,xi1,yi1,'Color','b');
-    
+    index = (xis>(x_i_l+peak_i(1,1))) &(xis<(x_i + peak_i(1,1)));
+    yis(index) = exp(-(xis(index)-peak_i(1,1)).^2./(2*peak_i(2,1)))./(sqrt(2*pi*peak_i(2,1)));
     if npi > 1
         for j=2:npi
-            hold(ax2, 'on');
             m = peak_i(1,j);
             v = peak_i(2,j);
             r = peak_i(3,j);
-            xi = -3*sqrt(v):0.01:3*sqrt(v);
-            yi = exp(-xi.^2./(2*v))./(sqrt(2*pi*v));
-            xi = xi + m;
-            yi = yi * r;
-            plot(ax2,xi,yi,'Color','b');
+            index = (xis>(m-3*sqrt(v))) &(xis<(m+3*sqrt(v)));
+            yis(index) = yis(index) + r * exp(-(xis(index)-m).^2./(2*v))./(sqrt(2*pi*v));
         end
     end
     r2 = peak_i(3,npi+1);
     if r2>0
-        hold(ax2,'on');
         x_i_u = phinv(peak_i(2,1),peak_i(3,1)+r2);
-        xi2 = x_i:0.01:x_i_u;
-        yi2 = exp(-xi2.^2./(2*peak_i(2,1)))./(sqrt(2*pi*peak_i(2,1)));
-        xi2 =xi2-x_i;
-        plot(ax2,xi2,yi2,'Color','b');
-        hold(ax1,'on');
-        a1 = yi2(1);
-        a2 = yi2(end);
-        a1 = 0:0.0001:a1;
-        a2 = 0:0.0001:a2;
-        b1 = ones(1,size(a1,2));
-        b2 = ones(1,size(a2,2));
-        plot(ax2,0*b1,a1,'Color','b');
-        hold(ax1,'on');
-        plot(ax2,(x_i_u-x_i)*b2,a2,'Color','b');
+        index = (xis>0)&(xis<(x_i_u-x_i));
+        yis(index) = yis(index) + exp(-(xis(index)+x_i).^2./(2*peak_i(2,1)))./(sqrt(2*pi*peak_i(2,1)));
     end
-    
+    plot(ax2,xis,yis,'Color','b');
     xlim(ax2,[-66,100]);
     ylim(ax2,[0,0.2]);
     sgtitle(['t = ', num2str(i*param.delta_time),' ms']);

@@ -1,5 +1,5 @@
-%% Load N_GE, N_GI, H_E, H_I
 
+<<<<<<< Updated upstream
 ne = 300;
 ni = 100;
 duration = 3000;
@@ -78,42 +78,96 @@ for tInd = 100:length(N_GE) - ShowSize
 end
 
 %%
+=======
+HE = res.HE;
+HI = res.HI;
+V_E = res.VE;
+V_I = res.VI;
+N_GE = res.NGE;
+N_GI = res.NGI;
+t_HI = res.tHI;
+ne = param1.ne;
+ni = param1.ni;
+>>>>>>> Stashed changes
 figure;
 times = 500;
 mark = 1;
-set(gcf,'Position',[10,10,1000,600]);
-subplot(1,3,3);
-a=plot3(N_GE, N_GI, H_I,'b');
-a.Color(4)=0.03;
+set(gcf,'Position',[10,10,1600,600]);
+subplot(2,10,[4,5,9,10]);
+a=plot3(N_GE, N_GI, t_HI,'b');
+a.Color(4)=0.06;
 grid on;
 hold on;
 ShowSize = 30;
-view([-110,  30]);
+view([-60,  30]);
 t= 1000;
 Win = t:t+ShowSize-1;
-a1 = plot3(N_GE(Win), N_GI(Win), H_I(Win), 'r','LineWidth',3);
+a1 = plot3(N_GE(Win), N_GI(Win), t_HI(Win), 'r','LineWidth',3);
+max_HE = max(max(HE))+2;
+max_HI = max(max(HI))+2;
 for i = 1:times
     t = size(V_E,1)-5*(times +10) + 5*i;
     V_E_temp = V_E(t, :);
     V_I_temp = V_I(t, :);
-    subplot(2,3,1);
+    H_E_temp = HE(t,:);
+    H_I_temp = HI(t,:);
+    
+    %V_E distribution
+    subplot(2,5,1);
     h1 = histogram(V_E_temp, 'Normalization','probability');
     h1.FaceColor = 'b';
-    h1.BinEdges = [-70:5:100];
-    xlim([-70,100]);
+    h1.BinEdges = [-700:50:1000];
+    xlim([-700,1000]);
     xlabel('V_E');
     ylim([0, 0.6]);
-    subplot(2,3,4);
-    h2 = histogram(V_I_temp, 'Normalization','probability');
-    h2.FaceColor = 'r';
-    h2.BinEdges = [-70:5:100];
-    xlim([-70,100]);
+    
+    %H_EE distribution
+    subplot(2,5,2);
+    h2 = histogram(H_E_temp(1:ne), 'Normalization','probability');
+    h2.FaceColor = 'b';
+    h2.BinEdges = [0:5:max_HE];
+    ylim([0, 1]);
+    xlabel('H_{EE}');
+    
+    %H_IE distribution
+    subplot(2,5,3);
+    h3 = histogram(H_E_temp(ne+1:ne+ni), 'Normalization','probability');
+    h3.FaceColor = 'b';
+    h3.BinEdges = [0:5:max_HE];
+    ylim([0, 1]);
+    xlabel('H_{IE}');
+    
+    %V_I distribution
+    subplot(2,5,6);
+    h4 = histogram(V_I_temp, 'Normalization','probability');
+    h4.FaceColor = 'r';
+    h4.BinEdges = [-700:50:1000];
+    xlim([-700,1000]);
     ylim([0, 0.6]);
     xlabel('V_I');
-    subplot(2,3,[2,3,5,6]);
+    
+    %H_EI distribution
+    subplot(2,5,7);
+    h5 = histogram(H_I_temp(1:ne), 'Normalization','probability');
+    h5.FaceColor = 'r';
+    h5.BinEdges = [0:5:max_HI];
+    ylim([0, 1]);
+    xlabel('H_{EI}');
+    
+    %H_II distribution
+    subplot(2,5,8);
+    h6 = histogram(H_I_temp(ne+1:ne+ni), 'Normalization','probability');
+    h6.FaceColor = 'r';
+    h6.BinEdges = [0:5:max_HI];
+    ylim([0, 1]);
+    xlabel('H_{II}');
+    
+    
+    kkk= subplot(2,5,[4,5,9,10]);
+    kkk.Position = kkk.Position + [0.05 0 0 0.0];
     Win = t:t+ShowSize-1;
-    a=plot3(N_GE, N_GI, H_I,'b');
-    a.Color(4)=0.03;
+    a=plot3(N_GE, N_GI, t_HI,'b');
+    a.Color(4)=0.06;
     xlabel('N_{GE}');
     ylabel('N_{GI}');
     zlabel('H_I');
@@ -121,11 +175,10 @@ for i = 1:times
     hold on;
     view([-110,  30]);
     delete(a1);
-    a1 = plot3(N_GE(Win), N_GI(Win), H_I(Win), 'r','LineWidth',3);
+    a1 = plot3(N_GE(Win), N_GI(Win), t_HI(Win), 'r','LineWidth',3);
     hold on;
-    pause(0.02)
-    sgtitle(['t=', num2str(t*0.1)]);
-
+    sgtitle(['t=', num2str(res.time(t))]);
+    pause(0.01)
     pause(0.005);
     delete(h1);
     delete(h2);
@@ -150,6 +203,7 @@ H_E = res.tHE;
 N_GE = res.NGE;
 N_GI = res.NGI;
 
+<<<<<<< Updated upstream
 % Discard first 100
 V_E = V_E(100:end, :);
 V_I = V_I(100:end, :);
@@ -198,3 +252,6 @@ end
 cd ..;
 cd ..;
 cd ..;
+=======
+
+>>>>>>> Stashed changes
