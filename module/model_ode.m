@@ -46,6 +46,9 @@ res.peak_i=zeros(duration/delta_time,30);
 res.npi = zeros(duration/delta_time,1);
 res.npe = zeros(duration/delta_time,1);
 res.h=zeros(duration/delta_time,4);
+res.index_e=zeros(duration/delta_time,1);
+res.index_i=zeros(duration/delta_time,1);
+
 index_e=1;
 index_i=1;
 while t < duration
@@ -106,6 +109,9 @@ end
                         peak_e(3,npe+1)=0;
                         m_new = sum(peak_e(3,1:npe).*peak_e(1,1:npe));
                         peak_e(2,1) = sum(peak_e(3,1:npe).*(peak_e(2,1:npe)+peak_e(1,1:npe).^2))-m_new^2;
+                        
+                        peak_e(2,1) = peak_e(2,1)/3;
+                        
                         peak_e(1,1) = m_new;
                         peak_e(3,1) = 1;
                         peak_e(:,2:10) = 0;
@@ -137,12 +143,11 @@ end
         if peak_e(3,2)*peak_e(2,2)~=0
             if (peak_e(1,1)-sqrt(peak_e(2,1))<peak_e(1,2)+sqrt(peak_e(2,2))) || (peak_e(1,2)+3*sqrt(peak_e(2,2))>M)
                 [m,v]=newpeak(peak_e(2,1),0.0001,peak_e(3,1));
-                peak_e(1,1)=m;
                 peak_e(2,1)=v;
                 m_new=sum(peak_e(3,1:2).*peak_e(1,1:2))/(peak_e(3,1)+peak_e(3,2));
                 v_new=sum(peak_e(3,1:2).*(peak_e(2,1:2)+peak_e(1,1:2).^2))/(peak_e(3,1)+peak_e(3,2))-m_new^2;
                 peak_e(1,1)=m_new;
-                peak_e(2,1)=v_new;
+                peak_e(2,1)=v_new/3;
                 peak_e(3,1)=peak_e(3,1)+peak_e(3,2);
                 peak_e(:,2:9)=peak_e(:,3:10);
                 npe=npe-1;
@@ -182,6 +187,9 @@ end
                         peak_i(3,npi+1)=0;
                         m_new = sum(peak_i(3,1:npi).*peak_i(1,1:npi));
                         peak_i(2,1) = sum(peak_i(3,1:npi).*(peak_i(2,1:npi)+peak_i(1,1:npi).^2))-m_new^2;
+                        
+                        peak_i(2,1)=peak_i(2,1)/3;
+                        
                         peak_i(1,1) = m_new;
                         peak_i(3,1) = 1;
                         peak_i(:,2:10) = 0;
@@ -213,12 +221,11 @@ end
         if peak_i(3,2)*peak_i(2,2)~=0
             if (peak_i(1,1)-sqrt(peak_i(2,1))<peak_i(1,2)+sqrt(peak_i(2,2))) || (peak_i(1,2)+3*sqrt(peak_i(2,2))>M)
                 [m,v]=newpeak(peak_i(2,1),0.0001,peak_i(3,1));
-                peak_i(1,1)=m;
                 peak_i(2,1)=v;
                 m_new=sum(peak_i(3,1:2).*peak_i(1,1:2))/(peak_i(3,1)+peak_i(3,2));
                 v_new=sum(peak_i(3,1:2).*(peak_i(2,1:2)+peak_i(1,1:2).^2))/(peak_i(3,1)+peak_i(3,2))-m_new^2;
                 peak_i(1,1)=m_new;
-                peak_i(2,1)=v_new;
+                peak_i(2,1)=v_new/3;
                 peak_i(3,1)=peak_i(3,1)+peak_i(3,2);
                 peak_i(:,2:9)=peak_i(:,3:10);
                 npi=npi-1;
