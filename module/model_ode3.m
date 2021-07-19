@@ -54,7 +54,11 @@ res.npe = zeros(duration/delta_time,1);
 res.h=zeros(duration/delta_time,4);
 res.index_e=zeros(duration/delta_time,1);
 res.index_i=zeros(duration/delta_time,1);
+res.fre=zeros(duration/delta_time,1);
+res.fri=zeros(duration/delta_time,1);
 
+fre=0;
+fri=0;
 index_e=1;
 index_i=1;
 while t < duration
@@ -71,6 +75,8 @@ while t < duration
         res.index_e(index1)=index_e;
         res.index_i(index1)=index_i;
         res.h(index1,:)=h(:)';
+        res.fre(index1,:)=fre;
+        res.fri(index1,:)=fri;
         t_temp=0;
     end
 end
@@ -88,22 +94,23 @@ end
             case 1
                 M_e=(Mr+peak_e(1,1:npe))./(M+Mr);
                 V_e(1,:)=-2*peak_e(2,1:npe)./(M+Mr);
-                peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei)*dt;
+                peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
                 peak_e(1,1:npe)=peak_e(1,1:npe)+(lambda_e+1/tau(1)*h_temp(1)*s_ee-1/tau(3)*M_e*h_temp(3)*s_ei)*dt;
                 if peak_e(1,1)+3*sqrt(peak_e(2,1))>M
                     index_e = 2;
                 end
+                fre=0;
             case 2
                 M_e=(Mr+peak_e(1,1:npe))./(M+Mr);
                 V_e(1,:)=-2*peak_e(2,1:npe)./(M+Mr);
-                peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei)*dt;
+                peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
                 peak_e(1,1:npe)=peak_e(1,1:npe)+(lambda_e+1/tau(1)*h_temp(1)*s_ee-1/tau(3)*M_e*h_temp(3)*s_ei)*dt;
                 dh=peak_e(3,1)-phi(M-peak_e(1,1),peak_e(2,1));
                 if dh>0
                     peak_e(3,npe+1)=peak_e(3,npe+1)+dh;
                     peak_e(3,1)=peak_e(3,1)-dh;
-                    h(1)=h(1)+dh*ne;
-                    h(2)=h(2)+dh*ne;
+                    h(1)=h(1)+dh*ne*p_ee;
+                    h(2)=h(2)+dh*ne*p_ie;
                     if peak_e(3,1)<0.0013
                         [m_new,v_new]=newpeak(peak_e(2,1),peak_e(3,1),peak_e(3,npe+1)+peak_e(3,1));
                         peak_e(1,1)=m_new;
@@ -114,7 +121,7 @@ end
                         m_new = sum(peak_e(3,1:npe).*peak_e(1,1:npe));
                         peak_e(2,1) = sum(peak_e(3,1:npe).*(peak_e(2,1:npe)+peak_e(1,1:npe).^2))-m_new^2;
                         
-                        peak_e(2,1) = peak_e(2,1);
+                        peak_e(2,1) = peak_e(2,1)/3;
                         
                         peak_e(1,1) = m_new;
                         peak_e(3,1) = 1;
@@ -129,28 +136,30 @@ end
                     peak_e(2,npe)=v_new;
                     index_e = 3;
                 end
+                fre=max(dh,0)/dt;
             case 3
                 M_e=(Mr+peak_e(1,1:npe))./(M+Mr);
                 V_e(1,:)=-2*peak_e(2,1:npe)./(M+Mr);
-                peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei)*dt;
+                peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
                 peak_e(1,1:npe)=peak_e(1,1:npe)+(lambda_e+1/tau(1)*h_temp(1)*s_ee-1/tau(3)*M_e*h_temp(3)*s_ei)*dt;
                 dh=peak_e(3,1)-phi(M-peak_e(1,1),peak_e(2,1));
                 if dh>0
                     peak_e(3,npe+1)=peak_e(3,npe+1)+dh;
                     peak_e(3,1)=peak_e(3,1)-dh;
-                    h(1)=h(1)+dh*ne;
-                    h(2)=h(2)+dh*ne;
+                    h(1)=h(1)+dh*ne*p_ee;
+                    h(2)=h(2)+dh*ne*p_ie;
                     index_e = 2;
                 end
+                fre=max(dh,0)/dt;
         end
         if peak_e(3,2)*peak_e(2,2)~=0
             if (peak_e(1,1)-sqrt(peak_e(2,1))<peak_e(1,2)+sqrt(peak_e(2,2))) || (peak_e(1,2)+3*sqrt(peak_e(2,2))>M)
-                [m,v]=newpeak(peak_e(2,1),0.0001,peak_e(3,1));
+                [~,v]=newpeak(peak_e(2,1),0.0001,peak_e(3,1));
                 peak_e(2,1)=v;
                 m_new=sum(peak_e(3,1:2).*peak_e(1,1:2))/(peak_e(3,1)+peak_e(3,2));
                 v_new=sum(peak_e(3,1:2).*(peak_e(2,1:2)+peak_e(1,1:2).^2))/(peak_e(3,1)+peak_e(3,2))-m_new^2;
                 peak_e(1,1)=m_new;
-                peak_e(2,1)=v_new;
+                peak_e(2,1)=v_new/3;
                 peak_e(3,1)=peak_e(3,1)+peak_e(3,2);
                 peak_e(:,2:9)=peak_e(:,3:10);
                 npe=npe-1;
@@ -159,26 +168,29 @@ end
                 end
             end
         end
+        
+        
         switch index_i
             case 1
                 M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
                 V_i(1,:)=-2*peak_i(2,1:npi)./(M+Mr);
-                peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii)*dt;
+                peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
                 peak_i(1,1:npi)=peak_i(1,1:npi)+(lambda_i+1/tau(2)*h_temp(2)*s_ie-1/tau(4)*M_i*h_temp(4)*s_ii)*dt;
                 if peak_i(1,1)+3*sqrt(peak_i(2,1))>M
                     index_i = 2;
                 end
+                fri=0;
             case 2
                 M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
                 V_i(1,:)=-2*peak_i(2,1:npi)./(M+Mr);
-                peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii)*dt;
+                peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
                 peak_i(1,1:npi)=peak_i(1,1:npi)+(lambda_i+1/tau(2)*h_temp(2)*s_ie-1/tau(4)*M_i*h_temp(4)*s_ii)*dt;
                 dh=peak_i(3,1)-phi(M-peak_i(1,1),peak_i(2,1));
                 if dh>0
                     peak_i(3,npi+1)=peak_i(3,npi+1)+dh;
                     peak_i(3,1)=peak_i(3,1)-dh;
-                    h(3)=h(3)+dh*ni;
-                    h(4)=h(4)+dh*ni;
+                    h(3)=h(3)+dh*ni*p_ei;
+                    h(4)=h(4)+dh*ni*p_ii;
                     if peak_i(3,1)<0.0013
                         [m_new,v_new]=newpeak(peak_i(2,1),peak_i(3,1),peak_i(3,npi+1)+peak_i(3,1));
                         peak_i(1,1)=m_new;
@@ -189,7 +201,7 @@ end
                         m_new = sum(peak_i(3,1:npi).*peak_i(1,1:npi));
                         peak_i(2,1) = sum(peak_i(3,1:npi).*(peak_i(2,1:npi)+peak_i(1,1:npi).^2))-m_new^2;
                         
-                        peak_i(2,1)=peak_i(2,1);
+                        peak_i(2,1)=peak_i(2,1)/3;
                         
                         peak_i(1,1) = m_new;
                         peak_i(3,1) = 1;
@@ -204,28 +216,30 @@ end
                     peak_i(2,npi)=v_new;
                     index_i = 3;
                 end
+                fri=max(dh,0)/dt;
             case 3
                 M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
                 V_i(1,:)=-2*peak_i(2,1:npi)./(M+Mr);
-                peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii)*dt;
+                peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
                 peak_i(1,1:npi)=peak_i(1,1:npi)+(lambda_i+1/tau(2)*h_temp(2)*s_ie-1/tau(4)*M_i*h_temp(4)*s_ii)*dt;
                 dh=peak_i(3,1)-phi(M-peak_i(1,1),peak_i(2,1));
                 if dh>0
                     peak_i(3,npi+1)=peak_i(3,npi+1)+dh;
                     peak_i(3,1)=peak_i(3,1)-dh;
-                    h(3)=h(3)+dh*ni;
-                    h(4)=h(4)+dh*ni;
+                    h(3)=h(3)+dh*ni*p_ei;
+                    h(4)=h(4)+dh*ni*p_ii;
                     index_i = 2;
                 end
+                fri=max(dh,0)/dt;
         end
         if peak_i(3,2)*peak_i(2,2)~=0
             if (peak_i(1,1)-sqrt(peak_i(2,1))<peak_i(1,2)+sqrt(peak_i(2,2))) || (peak_i(1,2)+3*sqrt(peak_i(2,2))>M)
-                [m,v]=newpeak(peak_i(2,1),0.0001,peak_i(3,1));
+                [~,v]=newpeak(peak_i(2,1),0.0001,peak_i(3,1));
                 peak_i(2,1)=v;
                 m_new=sum(peak_i(3,1:2).*peak_i(1,1:2))/(peak_i(3,1)+peak_i(3,2));
                 v_new=sum(peak_i(3,1:2).*(peak_i(2,1:2)+peak_i(1,1:2).^2))/(peak_i(3,1)+peak_i(3,2))-m_new^2;
                 peak_i(1,1)=m_new;
-                peak_i(2,1)=v_new;
+                peak_i(2,1)=v_new/3;
                 peak_i(3,1)=peak_i(3,1)+peak_i(3,2);
                 peak_i(:,2:9)=peak_i(:,3:10);
                 npi=npi-1;
@@ -234,6 +248,7 @@ end
                 end
             end
         end
+
         h = h-(h_temp./tau)*dt;
         
     end

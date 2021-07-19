@@ -4,7 +4,7 @@ npis = res.npi;
 npes = res.npe;
 peak_es = res.peak_e;
 peak_is = res.peak_i;
-set(gcf,'Position',[10,10,1200,1200]);
+set(gcf,'Position',[10,10,2400,1200]);
 ax1 = subplot(2,1,1);
 ax2 = subplot(2,1,2);
 writeObj = VideoWriter([save_path,'ode.avi']);
