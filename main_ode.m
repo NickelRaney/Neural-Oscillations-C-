@@ -45,7 +45,7 @@ param.tau_ie   = 1.2;
 param.tau_ei    = 4.5;
 param.tau_ii    = 4.5;
 param.duration = 1;
-param.delta_time = 0.5;
+param.delta_time = 0.1;
 param.dt = 0.01;
 %%
 tic;
@@ -85,6 +85,7 @@ plot(sum(res_mif.HE(range,1:300),2))
 hold on;
 plot(res.h(range,1)*300);
 xlabel('HEE');
+legend('MIF','ode');
 
 subplot(2,2,2);
 plot(sum(res_mif.HE(range,301:400),2))
