@@ -27,14 +27,14 @@ toc;
 %% ode3
 param.ne       = 300;
 param.ni       = 100;
-param.s_ee     = 5;
-param.s_ie     = 2;
-param.s_ei     = 4.91;
-param.s_ii     = 4.91;
-param.p_ee     = 0.15;
-param.p_ie     = 0.5;
-param.p_ei     = 0.5;
-param.p_ii     = 0.4;
+param.s_ee     = 5*0.15;
+param.s_ie     = 2*0.5;
+param.s_ei     = 4.91*0.4;
+param.s_ii     = 4.91*0.4;
+param.p_ee     = 1;
+param.p_ie     = 1;
+param.p_ei     = 1;
+param.p_ii     = 1;
 
 param.M        = 100;
 param.Mr       = 66;
@@ -45,8 +45,8 @@ param.tau_ie   = 1.2;
 param.tau_ei    = 4.5;
 param.tau_ii    = 4.5;
 param.duration = 1;
-param.delta_time = 0.5;
-param.dt = 0.01;
+param.delta_time = 0.1;
+param.dt = 0.001;
 %%
 tic;
 res=model_ode3(param);
@@ -57,15 +57,19 @@ s_path='./';
 ode_video(param,res,s_path)
 
 %%
+alpha = 10;
 param.lambda_e = 7000;
 param.lambda_i = 7000;
 param.tau_re=0;
 param.tau_ri=0;
-param.ns_ee=1;
-param.ns_ie=1;
-param.ns_ei=1;
-param.ns_ii=1;
-param.factor_Leak=0;
+param.ns_ee=alpha;
+param.ns_ie=alpha;
+param.ns_ei=alpha;
+param.ns_ii=alpha;
+param.s_ee     = 5*0.15/alpha;
+param.s_ie     = 2*0.5/alpha;
+param.s_ei     = 4.91*0.4/alpha;
+param.s_ii     = 4.91*0.4/alpha;
 param.LeakE = 20;
 param.LeakI = 16.7;
 param.factor_Leak = inf;
@@ -79,27 +83,49 @@ toc;
 s_path='./';
 compare_video(param,res,res_mif,s_path)
 %%
+figure;
 range=[1:300];
 subplot(2,2,1);
-plot(sum(res_mif.HE(range,1:300),2))
+plot(sum(res_mif.HE(range,1:300)/alpha,2))
 hold on;
 plot(res.h(range,1)*300);
 xlabel('HEE');
 
 subplot(2,2,2);
-plot(sum(res_mif.HE(range,301:400),2))
+plot(sum(res_mif.HE(range,301:400)/alpha,2))
 hold on;
 plot(res.h(range,2)*100);
 xlabel('HIE');
 
 subplot(2,2,3);
-plot(sum(res_mif.HI(range,1:300),2))
+plot(sum(res_mif.HI(range,1:300/alpha),2))
 hold on;
 plot(res.h(range,3)*300);
 xlabel('HEI');
 
 subplot(2,2,4);
-plot(sum(res_mif.HI(range,301:400),2))
+plot(sum(res_mif.HI(range,301:400)/alpha,2))
 hold on;
 plot(res.h(range,4)*100);
 xlabel('HII');
+
+%%
+range = [1:300];
+mVE_ode = zeros(300,1);
+mVI_ode = zeros(300,1);
+for i =1:300
+    peak_e = reshape(res.peak_e(i,:),3,10);
+    peak_i = reshape(res.peak_i(i,:),3,10);
+    mVE_ode(i) = peak_e(1,1) - peak_e(3,2)*100;
+    mVI_ode(i) = peak_i(1,1) - peak_i(3,2)*100;
+end
+subplot(1,2,1);
+plot(mean(res_mif.VE(range,:),2));
+hold on;
+plot(mVE_ode);
+
+
+subplot(1,2,2);
+plot(mean(res_mif.VI(range,:),2));
+hold on;
+plot(mVI_ode);

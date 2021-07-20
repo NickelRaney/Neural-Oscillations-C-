@@ -111,7 +111,7 @@ end
                     peak_e(3,1)=peak_e(3,1)-dh;
                     h(1)=h(1)+dh*ne*p_ee;
                     h(2)=h(2)+dh*ne*p_ie;
-                    if peak_e(3,1)<0.0013
+                    if peak_e(3,1)<0.0001
                         [m_new,v_new]=newpeak(peak_e(2,1),peak_e(3,1),peak_e(3,npe+1)+peak_e(3,1));
                         peak_e(1,1)=m_new;
                         peak_e(2,1)=v_new;
@@ -121,7 +121,7 @@ end
                         m_new = sum(peak_e(3,1:npe).*peak_e(1,1:npe));
                         peak_e(2,1) = sum(peak_e(3,1:npe).*(peak_e(2,1:npe)+peak_e(1,1:npe).^2))-m_new^2;
                         
-                        peak_e(2,1) = peak_e(2,1)/3;
+%                         (2,1) = peak_e(2,1)/3;
                         
                         peak_e(1,1) = m_new;
                         peak_e(3,1) = 1;
@@ -159,7 +159,7 @@ end
                 m_new=sum(peak_e(3,1:2).*peak_e(1,1:2))/(peak_e(3,1)+peak_e(3,2));
                 v_new=sum(peak_e(3,1:2).*(peak_e(2,1:2)+peak_e(1,1:2).^2))/(peak_e(3,1)+peak_e(3,2))-m_new^2;
                 peak_e(1,1)=m_new;
-                peak_e(2,1)=v_new/3;
+                peak_e(2,1)=v_new;
                 peak_e(3,1)=peak_e(3,1)+peak_e(3,2);
                 peak_e(:,2:9)=peak_e(:,3:10);
                 npe=npe-1;
@@ -191,7 +191,7 @@ end
                     peak_i(3,1)=peak_i(3,1)-dh;
                     h(3)=h(3)+dh*ni*p_ei;
                     h(4)=h(4)+dh*ni*p_ii;
-                    if peak_i(3,1)<0.0013
+                    if peak_i(3,1)<0.0001
                         [m_new,v_new]=newpeak(peak_i(2,1),peak_i(3,1),peak_i(3,npi+1)+peak_i(3,1));
                         peak_i(1,1)=m_new;
                         peak_i(2,1)=v_new;
@@ -201,7 +201,7 @@ end
                         m_new = sum(peak_i(3,1:npi).*peak_i(1,1:npi));
                         peak_i(2,1) = sum(peak_i(3,1:npi).*(peak_i(2,1:npi)+peak_i(1,1:npi).^2))-m_new^2;
                         
-                        peak_i(2,1)=peak_i(2,1)/3;
+%                         peak_i(2,1)=peak_i(2,1)/3;
                         
                         peak_i(1,1) = m_new;
                         peak_i(3,1) = 1;
@@ -239,7 +239,7 @@ end
                 m_new=sum(peak_i(3,1:2).*peak_i(1,1:2))/(peak_i(3,1)+peak_i(3,2));
                 v_new=sum(peak_i(3,1:2).*(peak_i(2,1:2)+peak_i(1,1:2).^2))/(peak_i(3,1)+peak_i(3,2))-m_new^2;
                 peak_i(1,1)=m_new;
-                peak_i(2,1)=v_new/3;
+                peak_i(2,1)=v_new;
                 peak_i(3,1)=peak_i(3,1)+peak_i(3,2);
                 peak_i(:,2:9)=peak_i(:,3:10);
                 npi=npi-1;
