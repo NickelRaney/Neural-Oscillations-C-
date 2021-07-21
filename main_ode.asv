@@ -128,19 +128,12 @@ for i =1:300
     mVE_ode(i) = sqrt(ve/2/pi)*exp(-xe^2/2/ve) + me;
     mVI_ode(i) = sqrt(vi/2/pi)*exp(-xi^2/2/vi) + mi;
     if npe(i)>=2
-        mVE_ode(i) = mVE_ode(i) + sum(peak_e(1,2:npe(i)).*peak_e(3,2:npe(i)));
-    end
-    if npi(i)>=2
-        mVI_ode(i) = mVI_ode(i) + sum(peak_i(1,2:npi(i)).*peak_i(3,2:npi(i)));
+        mVE_ode(i) 
     end
 end
 
 range = [1:300];
 subplot(1,2,1);
-plot(mean(res_mif.VE(range,:),2));
+plot(sum(res_mif.VE(range,:),2));
 hold on;
-plot(mVE_ode);
 subplot(1,2,2);
-plot(mean(res_mif.VI(range,:),2));
-hold on;
-plot(mVI_ode);

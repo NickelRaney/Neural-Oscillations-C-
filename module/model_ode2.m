@@ -206,7 +206,7 @@ end
                 peak_i(1,1:npi)=peak_i(1,1:npi)+(lambda_i+1/tau(2)*h_temp(2)*s_ie-1/tau(4)*M_i*h_temp(4)*s_ii)*dt;
                 dh=peak_i(3,1)-phi(M-peak_i(1,1),peak_i(2,1));
                 if dh>0
-                    peak_i(3,npi+1)=peak_i(3,npi+1)+dh;
+                    peak_i(3,npi)=peak_i(3,npi)+dh;
                     peak_i(3,1)=peak_i(3,1)-dh;
                     h(3)=h(3)+dh*ni;
                     h(4)=h(4)+dh*ni;

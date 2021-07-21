@@ -189,7 +189,6 @@ end
         
         switch index_i
             case 1
-                peak_i(3,:)
                 M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
                 V_i(1,:)=-2*peak_i(2,1:npi)./(M+Mr);
                 peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
@@ -202,14 +201,13 @@ end
                     h(4)=h(4)+dh*ni*p_ii;
                     npi = npi+1;
                     [m_new,v_new]=newpeak(peak_i(2,1),phi(M-peak_i(1,1),peak_i(2,1)),peak_i(3,1));
-                    peak_i(npi,1) = m_new;
-                    peak_i(npi,2) = v_new;
-                    peak_i(npi,3) = dh;
+                    peak_i(1, npi) = m_new;
+                    peak_i(2, npi) = v_new;
+                    peak_i(3, npi) = dh;
                     peak_i(3,1) = peak_i(3,1) - dh;
                 end
                 fri=0;
             case 2
-                peak_i(3,:)
                 M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
                 V_i(1,:)=-2*peak_i(2,1:npi)./(M+Mr);
                 peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
@@ -252,7 +250,6 @@ end
                 end
                 fri=max(dh,0)/dt;
             case 3
-                peak_i(3,:)
                 M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
                 V_i(1,:)=-2*peak_i(2,1:npi)./(M+Mr);
                 peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
@@ -261,9 +258,9 @@ end
                 if dh>0
                     npi = npi+1;
                     [m_new,v_new]=newpeak(peak_i(2,1),phi(M-peak_i(1,1),peak_i(2,1)),peak_i(3,1));
-                    peak_i(npi,1) = m_new;
-                    peak_i(npi,2) = v_new;
-                    peak_i(npi,3) = dh;
+                    peak_i(1,npi) = m_new;
+                    peak_i(2,npi) = v_new;
+                    peak_i(3,npi) = dh;
                     peak_i(3,1) = peak_i(3,1) - dh;
                     h(3)=h(3)+dh*ni*p_ei;
                     h(4)=h(4)+dh*ni*p_ii;

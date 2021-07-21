@@ -37,13 +37,6 @@ for i=1:size(npis)
             yes(index) = yes(index) + r * exp(-(xes(index)-m).^2./(2*v))./(sqrt(2*pi*v));
         end
     end
-    r2 = peak_e(3,npe+1);
-    if r2>0
-        x_e_u = phinv(peak_e(2,1),peak_e(3,1)+r2);
-        index = (xes>0)&(xes<(x_e_u-x_e));
-        yes(index) = yes(index) + exp(-(xes(index)+x_e).^2./(2*peak_e(2,1)))./(sqrt(2*pi*peak_e(2,1)));
-        
-    end
     
     histogram(ax1,ve(i,:),[-66:1:100],'Normalization','probability','Facecolor','r');
     hold(ax1,'on');
@@ -65,12 +58,6 @@ for i=1:size(npis)
             index = (xis>(m-3*sqrt(v))) &(xis<(m+3*sqrt(v)));
             yis(index) = yis(index) + r * exp(-(xis(index)-m).^2./(2*v))./(sqrt(2*pi*v));
         end
-    end
-    r2 = peak_i(3,npi+1);
-    if r2>0
-        x_i_u = phinv(peak_i(2,1),peak_i(3,1)+r2);
-        index = (xis>0)&(xis<(x_i_u-x_i));
-        yis(index) = yis(index) + exp(-(xis(index)+x_i).^2./(2*peak_i(2,1)))./(sqrt(2*pi*peak_i(2,1)));
     end
     
     histogram(ax2,vi(i,:),[-66:1:100],'Normalization','probability');
