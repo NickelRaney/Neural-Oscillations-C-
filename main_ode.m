@@ -57,6 +57,10 @@ s_path='./';
 ode_video(param,res,s_path)
 
 %%
+<<<<<<< Updated upstream
+=======
+alpha = 1;
+>>>>>>> Stashed changes
 param.lambda_e = 7000;
 param.lambda_i = 7000;
 param.tau_re=0;
