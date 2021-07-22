@@ -27,10 +27,10 @@ toc;
 %% ode3
 param.ne       = 300;
 param.ni       = 100;
-param.s_ee     = 5*0.15;
-param.s_ie     = 2*0.5;
-param.s_ei     = 4.91*0.4;
-param.s_ii     = 4.91*0.4;
+param.s_ee     = 5*0.15/20;
+param.s_ie     = 2*0.5/20;
+param.s_ei     = 4.91*0.4/20;
+param.s_ii     = 4.91*0.4/20;
 param.p_ee     = 1;
 param.p_ie     = 1;
 param.p_ei     = 1;
@@ -48,24 +48,44 @@ param.duration = 1;
 param.delta_time = 0.1;
 param.dt = 0.01;
 %%
+init=[];
 tic;
-res=model_ode3(param);
+res=model_ode3(param,init);
 toc;
 
 %%
 s_path='./';
 ode_video(param,res,s_path)
 
+
+%%
+t_track=136;
+init.peak_e=reshape(res.peak_e(t_track,:),3,10);
+init.peak_i=reshape(res.peak_i(t_track,:),3,10);
+init.npe=res.npe(t_track);
+init.npi=res.npi(t_track);
+init.h=res.h(t_track,:);
+init.index_e=res.index_e(t_track);
+init.index_i=res.index_i(t_track);
+init.peak_e(2,1)=257;
+init.peak_i(2,2)=191;
+%%
+tic;
+res2=model_ode3(param,init);
+toc;
+%%
+s_path='./';
+ode_video(param,res2,s_path)
 %%
 
 param.lambda_e = 7000;
 param.lambda_i = 7000;
 param.tau_re=0;
 param.tau_ri=0;
-param.ns_ee=1;
-param.ns_ie=1;
-param.ns_ei=1;
-param.ns_ii=1;
+param.ns_ee=20;
+param.ns_ie=20;
+param.ns_ei=20;
+param.ns_ii=20;
 param.factor_Leak=0;
 param.LeakE = 20;
 param.LeakI = 16.7;
@@ -97,7 +117,7 @@ xlabel('HIE');
 subplot(2,2,3);
 plot(sum(res_mif.HI(range,1:300),2))
 hold on;
-plot(res.h(range,3)*300);
+plot(res.h(range,3)*300);   
 xlabel('HEI');
 
 subplot(2,2,4);
@@ -125,8 +145,8 @@ for i =1:300
     ri = peak_i(3,1);
     xe = erfinv((2*re-1))*sqrt(2)*sqrt(ve);
     xi = erfinv((2*ri-1))*sqrt(2)*sqrt(vi);
-    mVE_ode(i) = sqrt(ve/2/pi)*exp(-xe^2/2/ve) + me;
-    mVI_ode(i) = sqrt(vi/2/pi)*exp(-xi^2/2/vi) + mi;
+    mVE_ode(i) = -sqrt(ve/2/pi)*exp(-xe^2/2/ve) + me;
+    mVI_ode(i) = -sqrt(vi/2/pi)*exp(-xi^2/2/vi) + mi;
     if npe(i)>=2
         mVE_ode(i) = mVE_ode(i) + sum(peak_e(1,2:npe(i)).*peak_e(3,2:npe(i)));
     end

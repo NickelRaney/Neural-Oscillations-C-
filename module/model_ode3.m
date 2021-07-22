@@ -1,4 +1,4 @@
-function res = model_ode3(param)
+function res = model_ode3(param,init)
 %this function delete the effect of pending spike on variance 
 %and add effect of connecting probability on variance.
 %this is the ode model of gamma
@@ -27,16 +27,32 @@ M=param.M;
 %second is the variance while the third is the share of each peak in total
 %population.
 
-peak_e=zeros(3,10);
-peak_i=zeros(3,10);
+if isempty(init)
+    peak_e=zeros(3,10);
+    peak_i=zeros(3,10);
+    peak_e(3,1)=1;
+    peak_i(3,1)=1;
+    h=zeros(1,4);
+    npe=1;
+    npi=1;
+    index_e=1;
+    index_i=1;
+else
+    peak_e=init.peak_e;
+    peak_i=init.peak_i;
+    h=init.h;
+    npe=init.npe;
+    npi=init.npi;
+    index_e=init.index_e;
+    index_i=init.index_i;
+end
+
+
 
 %npe&i record the number of peaks.
 
-npe=1;
-npi=1;
-peak_e(3,1)=1;
-peak_i(3,1)=1;
-h=zeros(1,4);
+
+
 tau=zeros(1,4);
 tau(1)=param.tau_ee;
 tau(2)=param.tau_ie;
@@ -59,8 +75,7 @@ res.fri=zeros(duration/delta_time,1);
 
 fre=0;
 fri=0;
-index_e=1;
-index_i=1;
+
 while t < duration
     t = t+dt;
     t_temp = t_temp+dt;
@@ -94,7 +109,8 @@ end
             case 1
                 M_e=(Mr+peak_e(1,1:npe))./(M+Mr);
                 V_e(1,:)=-2*peak_e(2,1:npe)./(M+Mr);
-                peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
+                peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
+%                 peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
                 peak_e(1,1:npe)=peak_e(1,1:npe)+(lambda_e+1/tau(1)*h_temp(1)*s_ee-1/tau(3)*M_e*h_temp(3)*s_ei)*dt;
                 if peak_e(1,1)+3*sqrt(peak_e(2,1))>M
                     dh = peak_e(3,1) - phi(M-peak_e(1,1),peak_e(2,1));
@@ -112,10 +128,12 @@ end
             case 2
                 M_e=(Mr+peak_e(1,1:npe))./(M+Mr);
                 V_e(1,:)=-2*peak_e(2,1:npe)./(M+Mr);
-                peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
+                peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
+%                 peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
                 peak_e(1,1:npe)=peak_e(1,1:npe)+(lambda_e+1/tau(1)*h_temp(1)*s_ee-1/tau(3)*M_e*h_temp(3)*s_ei)*dt;
                 dh=peak_e(3,1)-phi(M-peak_e(1,1),peak_e(2,1));
                 if dh>0
+                    
                     [m_new, v_new] = newpeak(peak_e(2,1), phi(M-peak_e(1,1),peak_e(2,1)), peak_e(3,1));
                     % Merge the small area and the left peak 
                     m_old = peak_e(1,npe);
@@ -153,7 +171,8 @@ end
             case 3
                 M_e=(Mr+peak_e(1,1:npe))./(M+Mr);
                 V_e(1,:)=-2*peak_e(2,1:npe)./(M+Mr);
-                peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
+                peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
+%                 peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
                 peak_e(1,1:npe)=peak_e(1,1:npe)+(lambda_e+1/tau(1)*h_temp(1)*s_ee-1/tau(3)*M_e*h_temp(3)*s_ei)*dt;
                 dh=peak_e(3,1)-phi(M-peak_e(1,1),peak_e(2,1));
                 if dh>0
@@ -191,7 +210,8 @@ end
             case 1
                 M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
                 V_i(1,:)=-2*peak_i(2,1:npi)./(M+Mr);
-                peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
+                peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
+%                 peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
                 peak_i(1,1:npi)=peak_i(1,1:npi)+(lambda_i+1/tau(2)*h_temp(2)*s_ie-1/tau(4)*M_i*h_temp(4)*s_ii)*dt;
                 if peak_i(1,1)+3*sqrt(peak_i(2,1))>M
                     dh=peak_i(3,1)-phi(M-peak_i(1,1),peak_i(2,1));
@@ -210,7 +230,8 @@ end
             case 2
                 M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
                 V_i(1,:)=-2*peak_i(2,1:npi)./(M+Mr);
-                peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
+                peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
+%                 peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
                 peak_i(1,1:npi)=peak_i(1,1:npi)+(lambda_i+1/tau(2)*h_temp(2)*s_ie-1/tau(4)*M_i*h_temp(4)*s_ii)*dt;
                 dh=peak_i(3,1)-phi(M-peak_i(1,1),peak_i(2,1));
                 if dh>0
@@ -252,7 +273,8 @@ end
             case 3
                 M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
                 V_i(1,:)=-2*peak_i(2,1:npi)./(M+Mr);
-                peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
+                peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
+%                 peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
                 peak_i(1,1:npi)=peak_i(1,1:npi)+(lambda_i+1/tau(2)*h_temp(2)*s_ie-1/tau(4)*M_i*h_temp(4)*s_ii)*dt;
                 dh=peak_i(3,1)-phi(M-peak_i(1,1),peak_i(2,1));
                 if dh>0
