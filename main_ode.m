@@ -125,13 +125,13 @@ for i =1:300
     ri = peak_i(3,1);
     xe = erfinv((2*re-1))*sqrt(2)*sqrt(ve);
     xi = erfinv((2*ri-1))*sqrt(2)*sqrt(vi);
-    mVE_ode(i) = sqrt(ve/2/pi)*exp(-xe^2/2/ve) + me;
-    mVI_ode(i) = sqrt(vi/2/pi)*exp(-xi^2/2/vi) + mi;
+    mVE_ode(i) = -sqrt(ve/2/pi)*exp(-xe^2/2/ve) + me;
+    mVI_ode(i) = -sqrt(vi/2/pi)*exp(-xi^2/2/vi) + mi;
     if npe(i)>=2
-        mVE_ode(i) = mVE_ode(i) + sum(peak_e(1,2:npe(i)).*peak_e(3,2:npe(i)));
+        mVE_ode(i) = mVE_ode(i)*peak_e(3,1) + sum(peak_e(1,2:npe(i)).*peak_e(3,2:npe(i)));
     end
     if npi(i)>=2
-        mVI_ode(i) = mVI_ode(i) + sum(peak_i(1,2:npi(i)).*peak_i(3,2:npi(i)));
+        mVI_ode(i) = mVI_ode(i)*peak_i(3,1) + sum(peak_i(1,2:npi(i)).*peak_i(3,2:npi(i)));
     end
 end
 
