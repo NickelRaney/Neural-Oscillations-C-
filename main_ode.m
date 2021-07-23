@@ -48,8 +48,9 @@ param.duration = 1;
 param.delta_time = 0.1;
 param.dt = 0.01;
 %%
-tic;
-res=model_ode3(param);
+init=[];
+tic;    
+res=model_ode3(param,init);
 toc;
 
 %%
@@ -57,15 +58,37 @@ s_path='./';
 ode_video(param,res,s_path)
 
 %%
+t_track=136;
+init.peak_e=reshape(res.peak_e(t_track,:),3,10);
+init.peak_i=reshape(res.peak_i(t_track,:),3,10);
+init.npe=res.npe(t_track);
+init.npi=res.npi(t_track);
+init.h=res.h(t_track,:);
+init.index_e=res.index_e(t_track);
+init.index_i=res.index_i(t_track);
+init.peak_e(2,1)=257;
+init.peak_i(2,2)=191;
+%%
+tic;
+res2=model_ode3(param,init);
+toc;
+%%
+s_path='./';
+ode_video(param,res2,s_path)
+%%
 
 param.lambda_e = 7000;
 param.lambda_i = 7000;
 param.tau_re=0;
 param.tau_ri=0;
-param.ns_ee=1;
-param.ns_ie=1;
-param.ns_ei=1;
-param.ns_ii=1;
+param.s_ee     = 5*0.15/100;
+param.s_ie     = 2*0.5/100;
+param.s_ei     = 4.91*0.4/100;
+param.s_ii     = 4.91*0.4/100;
+param.ns_ee=100;
+param.ns_ie=100;
+param.ns_ei=100;
+param.ns_ii=100;
 param.factor_Leak=0;
 param.LeakE = 20;
 param.LeakI = 16.7;
@@ -84,26 +107,26 @@ range=[1:300];
 subplot(2,2,1);
 plot(sum(res_mif.HE(range,1:300),2))
 hold on;
-plot(res.h(range,1)*300);
+plot(res.h(range,1)*300*100);
 xlabel('HEE');
 legend('MIF','ode');
 
 subplot(2,2,2);
 plot(sum(res_mif.HE(range,301:400),2))
 hold on;
-plot(res.h(range,2)*100);
+plot(res.h(range,2)*100*100);
 xlabel('HIE');
 
 subplot(2,2,3);
 plot(sum(res_mif.HI(range,1:300),2))
 hold on;
-plot(res.h(range,3)*300);
+plot(res.h(range,3)*300*100);   
 xlabel('HEI');
 
 subplot(2,2,4);
 plot(sum(res_mif.HI(range,301:400),2))
 hold on;
-plot(res.h(range,4)*100);
+plot(res.h(range,4)*100*100);
 xlabel('HII');
 
 %%

@@ -59,9 +59,13 @@ res.HE = zeros(ceil(duration_time/delta_time)+1,ne+ni);
 res.HI = zeros(ceil(duration_time/delta_time)+1,ne+ni);
 res.VE = zeros(ceil(duration_time/delta_time)+1,ne);
 res.VI = zeros(ceil(duration_time/delta_time)+1,ni);
-res.time =zeros(ceil(duration_time/delta_time)+1,1);
+res.spikecount =  zeros(ceil(duration_time/delta_time)+1,2);
+res.time = zeros(ceil(duration_time/delta_time)+1,1);
+
 index1 = 1;
 t_count = 0;
+spikecount_e=0;
+spikecount_i=0;
 while t < duration_time
     delta = log(1-rand(1)) / sum(c);
     t = t-delta;
@@ -82,9 +86,13 @@ while t < duration_time
         res.HI(index1,(ne+1):(ne+ni)) = histcounts(HII_temp,1:(ni+1));
         res.VE(index1,:) = VE - (Mr+1)*(1-awakeE);
         res.VI(index1,:) = VI - (Mr+1)*(1-awakeI);
+        res.spikecount(index1,1) = spikecount_e;
+        res.spikecount(index1,2) = spikecount_i;
         res.time(index1) = t;
         index1  = index1 +1;
         t_temp = 0;
+        spikecount_e=0;
+        spikecount_i=0;
     end
     
     index = find_index(c);      %type of events
@@ -205,6 +213,7 @@ while t < duration_time
     end
     if spikeE == 1
         spikeE = 0;
+        spikecount_e = spikecount_e+1;
         VE(whichhit) = 0;
         awakeE(whichhit) = 0;
         Eref(Eref(1)+2)=whichhit;
@@ -236,6 +245,7 @@ while t < duration_time
         res.spike(res.spike(1,whichhit)+1,whichhit)=t;
     end
     if spikeI == 1
+        spikecount_i = spikecount_i+1;
         spikeI = 0;
         VI(whichhit) = 0;
         awakeI(whichhit) = 0;
