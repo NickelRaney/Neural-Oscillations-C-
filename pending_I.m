@@ -74,3 +74,45 @@ saveas(gcf,'figure/ode/EffectOfI2.png');
 saveas(gcf,'figure/ode/EffectofI2.fig');
 
 %%
+init_var = 10;
+m = 20;
+num_n = 3000;
+HI = 5;
+tauI = 4.5;
+dt = 0.01;
+SI = 4.91;
+
+d = randn(1,num_n)*sqrt(init_var) + m;
+init_V = var(d);
+
+% Real simulation
+pending_I = exprnd(tauI, HI, num_n);
+t = max(max(pending_I));
+time_points = 0:dt:t;
+size_t =size(time_points,2);
+delta_V_real = zeros(size_t,1);
+delta_V_real(1) = 0;
+for i =2:size_t
+    bool_temp = pending_I > time_points(i-1) & pending_I <=time_points(i);
+    power_index = sum(bool_temp,1);
+    d = (d+66).*(1-SI/166).^(power_index)-66;
+    V = var(d);
+    delta_V_real(i) = V-init_V; 
+end
+
+% Estimation
+V=init_V;
+delta_V_esti = zeros(size_t,1);
+for i =2:size_t
+    V = V*(1-2*HI*SI*dt/(166*tauI));
+    HI = HI - HI*dt/tauI;
+    delta_V_esti(i) = V - init_V;
+end
+
+plot(time_points, delta_V_real);
+hold on;
+plot(time_points, delta_V_esti);
+xlabel('ms');
+ylabel('\Delta V');
+title('Simulation versus Estimation');
+legend('Simulation','Estimation');
