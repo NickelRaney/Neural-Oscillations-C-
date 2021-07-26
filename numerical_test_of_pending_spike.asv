@@ -26,7 +26,6 @@ plot(var_spike-var_init);
 
 init_e=randn(1,10000)*sqrt(30)+50;
 init_i=pic(init_e);
-%%
 
 spike=[exprnd(4.5,20,10000);exprnd(4.5,20,10000)+2];
 var_spike_i=zeros(1,200);
@@ -45,18 +44,13 @@ for t=0.05:0.05:10
 end
 
 %%
-init_i=randn(1,10000)*sqrt(30)+10;
-init_e=pec(init_i);
-histogram(init_e);
+[a,b]=pecd(40,60)
 %%
 mean_c=zeros(1,200);
 var_c=zeros(1,200);
 for i=1:200
     [mean_c(i),var_c(i)]=pecd(mean_spike_i(i),var_spike_i(i));
 end
-
-%%
-[m,v]=pecd(40.32,61.27)
 %%
 function d=update(d,index)
 for i=1:length(d)
@@ -74,7 +68,7 @@ if v==0
     m1=pic(m);
 else
     x=m-3*sqrt(v):6*sqrt(v)/20:m+3*sqrt(v);
-    y=1/sqrt(2*pi*v)*exp(-(x-m).^2/2/v)*6*sqrt(v)/20;
+    y=1/sqrt(2*pi*v)*exp(-x.^2/2/v);
     x=pic(x');
     m1=y*x;
     v1=y*x.^2-m1^2;
@@ -87,7 +81,7 @@ if v==0
     m1=pec(m);
 else
     x=m-3*sqrt(v):6*sqrt(v)/20:m+3*sqrt(v);
-    y=1/sqrt(2*pi*v)*exp(-(x-m).^2/2/v)*6*sqrt(v)/20;
+    y=1/sqrt(2*pi*v)*exp(-x.^2/2/v);
     x=pec(x');
     m1=y*x;
     v1=y*x.^2-m1^2;
