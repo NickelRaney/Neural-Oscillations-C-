@@ -56,7 +56,9 @@ for i=1:200
 end
 
 %%
-[m,v]=pecd(40.32,61.27)
+[m,v]=picd(40.32,61.27)
+[m2,v2]=picd(40.32,61.271)
+v2-v
 %%
 function d=update(d,index)
 for i=1:length(d)
@@ -73,8 +75,8 @@ if v==0
     v1=0;
     m1=pic(m);
 else
-    x=m-3*sqrt(v):6*sqrt(v)/20:m+3*sqrt(v);
-    y=1/sqrt(2*pi*v)*exp(-(x-m).^2/2/v)*6*sqrt(v)/20;
+    x=m-3*sqrt(v):6*sqrt(v)/50:m+3*sqrt(v);
+    y=1/sqrt(2*pi*v)*exp(-(x-m).^2/2/v)*6*sqrt(v)/50;
     x=pic(x');
     m1=y*x;
     v1=y*x.^2-m1^2;

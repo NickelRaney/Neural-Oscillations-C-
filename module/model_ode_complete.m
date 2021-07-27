@@ -84,16 +84,16 @@ spikecount_i=zeros(duration/dt,1);
 %variance_kernel;
 t=tau(1)*4:-dt:dt;
 lvk_ee=round(tau(1)*4/dt);
-vk_ee=(2/tau(1)*exp(-2*t/tau(1))-exp(-t/tau(1))/tau(1))*s_ee^2;
+vk_ee=(1-exp(-t/tau(1))).*exp(-t/tau(1))*s_ee^2;
 t=tau(2)*4:-dt:dt;
 lvk_ie=round(tau(2)*4/dt);
-vk_ie=(2/tau(2)*exp(-2*t/tau(2))-exp(-t/tau(2))/tau(2))*s_ie^2;
+vk_ie=(1-exp(-t/tau(2))).*exp(-t/tau(2))*s_ie^2;
 t=tau(3)*4:-dt:dt;
 lvk_ei=round(tau(3)*4/dt);
-vk_ei=(2/tau(3)*exp(-2*t/tau(3))-exp(-t/tau(3))/tau(3))*s_ei^2;
+vk_ei=(1-exp(-t/tau(3))).*exp(-t/tau(3))*s_ei^2;
 t=tau(4)*4:-dt:dt;
 lvk_ii=round(tau(4)*4/dt);
-vk_ii=(2/tau(4)*exp(-2*t/tau(4))-exp(-t/tau(4))/tau(4))*s_ii^2;
+vk_ii=(1-exp(-t/tau(4))).*exp(-t/tau(4))*s_ii^2;
 t=0;
 lmax=round(max(tau)*4/dt);
 
@@ -101,7 +101,10 @@ spikecount_e=zeros(lmax+duration/dt,1);
 spikecount_i=zeros(lmax+duration/dt,1);
 
 %pending spike variance
-
+psv_ee=zeros(lmax+duration/dt,1);
+psv_ie=zeros(lmax+duration/dt,1);
+psv_ei=zeros(lmax+duration/dt,1);
+psv_ii=zeros(lmax+duration/dt,1);
 
 ntime=lmax;
 
@@ -127,6 +130,10 @@ end
 res.spikecount_e=spikecount_e;
 res.spikecount_i=spikecount_i;
 
+res.psv_ee=psv_ee;
+res.psv_ie=psv_ie;
+res.psv_ei=psv_ei;
+res.psv_ii=psv_ii;
 
     function update()
         %峰的运动一共分为三种情况。对于每个峰，我们认为它只有3sigma宽。3sigma以外的分布不考虑。
@@ -139,14 +146,17 @@ res.spikecount_i=spikecount_i;
         h_temp=h;
         ntime=ntime+1;
         
-        dpsv_ee=vk_ee*spikecount_e(ntime-lvk_ee:ntime-1);
-        dpsv_ei_ic=vk_ei*spikecount_i(ntime-lvk_ei:ntime-1);%the dv in pending I spike coordinate
-        dpsv_ei=ct(dpsv_ei_ic,peak_e,npe);%coordinate transformation
+        psv_ee(ntime)=vk_ee*spikecount_e(ntime-lvk_ee:ntime-1);
+        dpsv_ee=psv_ee(ntime)-psv_ee(ntime-1);
+        psv_ei(ntime)=vk_ei*spikecount_i(ntime-lvk_ei:ntime-1);
+        dpsv_ei=psv_ei(ntime)-psv_ei(ntime-1);
         
         M_e=(Mr+peak_e(1,1:npe))./(M+Mr);
+        V_e(1,:)=-2*peak_e(2,1:npe)./(M+Mr);
+        peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei+...
+            (1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
+%         +dpsv_ee+dpsv_ei
         peak_e(1,1:npe)=peak_e(1,1:npe)+(lambda_e+1/tau(1)*h_temp(1)*s_ee-1/tau(3)*M_e*h_temp(3)*s_ei)*dt;
-        peak_e(2,1:npe)=peak_e(2,1:npe)...
-            +(dpsv_ee+dpsv_ei+lambda_e+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
         switch index_e
             case 1
                 if peak_e(1,1)+3*sqrt(peak_e(2,1))>M
@@ -234,15 +244,17 @@ res.spikecount_i=spikecount_i;
             end
         end
         
+        psv_ie(ntime)=vk_ie*spikecount_e(ntime-lvk_ie:ntime-1);
+        dpsv_ie=psv_ie(ntime)-psv_ie(ntime-1);
+        psv_ii(ntime)=vk_ii*spikecount_i(ntime-lvk_ii:ntime-1);
+        dpsv_ii=psv_ii(ntime)-psv_ii(ntime-1);
         
-        dpsv_ie=vk_ie*spikecount_e(ntime-lvk_ie:ntime-1);
-        dpsv_ii_ic=vk_ii*spikecount_i(ntime-lvk_ii:ntime-1);
-        dpsv_ii=ct(dpsv_ii_ic,peak_i,npi);%coordinate transformation
-
         M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
+        V_i(1,:)=-2*peak_i(2,1:npi)./(M+Mr);
+        peak_i(2,1:npi)=peak_i(2,1:npi)+(lambda_i+1/tau(4)*V_i(1,:)*h_temp(4)*s_ii+...
+            (1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
+%         +dpsv_ie+dpsv_ii
         peak_i(1,1:npi)=peak_i(1,1:npi)+(lambda_i+1/tau(2)*h_temp(2)*s_ie-1/tau(4)*M_i*h_temp(4)*s_ii)*dt;
-        peak_i(2,1:npi)=peak_i(2,1:npi)...
-        +(dpsv_ie+dpsv_ii+lambda_i+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
         switch index_i
             case 1
                 if peak_i(1,1)+3*sqrt(peak_i(2,1))>M
@@ -331,12 +343,14 @@ res.spikecount_i=spikecount_i;
                 end
             end
         end
+        
         h = h-(h_temp./tau)*dt;
+        
     end
 
 
     function h = phi(x,v)
-        
+        t
         % Return the CDF of the Gaussian N(0,sqrt(v)).
         h=0.5*(1+erf(x/sqrt(v)/sqrt(2)));
     end
@@ -359,33 +373,5 @@ res.spikecount_i=spikecount_i;
         m=(1/sqrt(2*pi*v)*exp(-x.^2/2/v).*((b-a)/100))*(x-a)';
         % Calculate the new variance
         v=(1/sqrt(2*pi*v)*exp(-x.^2/2/v).*((b-a)/100))*((x-a).^2)'-m^2;
-    end
-
-    function d=ct(d_ic,peak,np)
-        
-        qct=zeros(1,np);
-        for i=1:np
-            peak(1,i);
-            peak(2,i);
-            qct(i)=(picd(peak(1,i),peak(2,i)+0.0001)-picd(peak(1,i),peak(2,i)))/0.0001;
-        end
-        
-        d=d_ic./qct;
-    end
-
-    function v1=picd(m,v)
-        if v==0
-            v1=0;
-        else
-            x=m-3*sqrt(v):6*sqrt(v)/30:m+3*sqrt(v);
-            y=1/sqrt(2*pi*v)*exp(-(x-m).^2/2/v)*(x(2)-x(1));
-            x=pic(x');
-            m1=y*x;
-            v1=y*x.^2-m1^2;
-        end
-    end
-
-    function y=pic(x)
-        y=166*log((66+x)/166)+100;
     end
 end

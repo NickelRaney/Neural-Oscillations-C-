@@ -44,8 +44,8 @@ legend('Simulation', 'Estimation');
 %% Pending I spikes
 dt = 0.001;
 duration = 100;
-init_var = 10;
-init_mean = 10;
+init_var = 40;
+init_mean = 40;
 num_neuron = 3000;
 HI = 1;
 SI = 4.91;
@@ -75,11 +75,11 @@ d_varE(1) = 0;
 for i =2:num_t
     t = times(i);
     m_temp = m_temp + HI*(m_temp +66)*(-1/tauI*exp(-times(i)/tauI))*SI/166*dt;
-    a = 1+HI*dt*((1/tauI*exp(-times(i)/tauI))*(1-SI/166)^2 -1/tauI*exp(-times(i)/tauI));
-    b = HI*dt*(2/tauI*exp(-2*times(i)/tauI) - 1/tauI*exp(-t/tauI))*(SI/166)^2*(10+66)^2;
-    var_temp = (var_temp - b/(1-a))^HI + b/(1-a);
-%     var_temp = var_temp + HI*dt*(var_temp*((1/tauI*exp(-times(i)/tauI))*(1-SI/166)^2 -1/tauI*exp(-times(i)/tauI))+...
-%         (2/tauI*exp(-2*times(i)/tauI) - 1/tauI*exp(-t/tauI))*(SI/166)^2*(10+66)^2);
+%     a = 1+HI*dt*((1/tauI*exp(-times(i)/tauI))*(1-SI/166)^2 -1/tauI*exp(-times(i)/tauI));
+%     b = HI*dt*(2/tauI*exp(-2*times(i)/tauI) - 1/tauI*exp(-t/tauI))*(SI/166)^2*(10+66)^2;
+%     var_temp = (var_temp - b/(1-a))^HI + b/(1-a);
+     var_temp = var_temp + HI*dt*(var_temp*((1/tauI*exp(-times(i)/tauI))*(1-SI/166)^2 -1/tauI*exp(-times(i)/tauI))+...
+         (2/tauI*exp(-2*times(i)/tauI) - 1/tauI*exp(-t/tauI))*(SI/166)^2*(m_temp+66)^2);
     d_varE(i) = var_temp - var0;
 end
 

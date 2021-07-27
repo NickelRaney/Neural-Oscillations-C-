@@ -44,13 +44,13 @@ param.tau_ee   = 1.4;
 param.tau_ie   = 1.2;
 param.tau_ei    = 4.5;
 param.tau_ii    = 4.5;
-param.duration = 1;
+param.duration = 0.0148;
 param.delta_time = 0.1;
 param.dt = 0.01;
 %%
 init=[];
 tic;    
-res=model_ode3(param,init);
+res=model_ode4(param,init);
 toc;
 
 %%
@@ -85,10 +85,10 @@ param.s_ee     = 5*0.15;
 param.s_ie     = 2*0.5;
 param.s_ei     = 4.91*0.4;
 param.s_ii     = 4.91*0.4;
-param.ns_ee=100;
-param.ns_ie=100;
-param.ns_ei=100;
-param.ns_ii=100;
+param.ns_ee=1;
+param.ns_ie=1;
+param.ns_ei=1;
+param.ns_ii=1;
 param.factor_Leak=0;
 param.LeakE = 20;
 param.LeakI = 16.7;
