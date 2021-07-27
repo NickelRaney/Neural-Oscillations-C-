@@ -29,12 +29,12 @@ init_i=pic(init_e);
 %%
 
 spike=[exprnd(4.5,20,10000)];
-var_spike_i=zeros(1,400);
-mean_spike_i=zeros(1,400);
-var_spike_e=zeros(1,400);
-mean_spike_e=zeros(1,400);
+var_spike_i=zeros(1,200);
+mean_spike_i=zeros(1,200);
+var_spike_e=zeros(1,200);
+mean_spike_e=zeros(1,200);
 d=init_e;
-for t=0.05:0.05:20
+for t=0.05:0.05:10
     index = sum(spike > t-0.05 & spike<= t,1);
     d=update(d,index);
     var_spike_e(round(t/0.05))=var(d);
@@ -51,16 +51,14 @@ dt=0.01;
 mean_c=zeros(1,1000);
 var_c=zeros(1,1000);
 count=1;
-for t=0.01:0.01:20
+for t=0.01:0.01:10
     dv_ic=20*(2/4.5*exp(-2*t/4.5)-exp(-t/4.5)/4.5);
     dm=-1/4.5*(m+66)/166*h;
-    dv=ct(dv_ic,m,v,dm);
+    dv=ct(dv_iv,m,v,dm);
     m=m+dm*dt;
     v=v+dv*dt;
     h=h-h/4.5*dt;
-    mean_c(count)=m;
-    var_c(count)=v;
-    count=count+1;
+    mean_c(
 end
 
 %%
@@ -75,8 +73,8 @@ for i=1:200
 end
 
 %%
-[v]=picd(50,30)
-[v2]=picd(50,30+0.01)
+[m,v]=picd(40.32,61.27)
+[m2,v2]=picd(40.33,61.27)
 v2-v
 %%
 function d=update(d,index)
@@ -91,13 +89,13 @@ end
 %%
 
 function dv=ct(dv_ic,m,v,dm)
-    
-    p=(picd(m+0.0001,v)-picd(m,v))/0.0001;
-    
-    q=(picd(m,v+0.0001)-picd(m,v))/0.0001;
+    a=picd(m,v)-picd(m,v);
+    dv_ic=dv_ic-a;
+    p=(picd(m+0.00001,v)-picd(m,v))/0.00001;
+    q=(picd(m,v+0.00001)-picd(m,v))/0.00001;
     dv=(dv_ic-p*dm)/q;
 end
-function [v1]=picd(m,v)
+function [m1,v1]=picd(m,v)
 if v==0
     v1=0;
     m1=pic(m);

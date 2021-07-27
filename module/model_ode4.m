@@ -141,10 +141,12 @@ res.spikecount_i=spikecount_i;
         
         dpsv_ee=vk_ee*spikecount_e(ntime-lvk_ee:ntime-1);
         dpsv_ei_ic=vk_ei*spikecount_i(ntime-lvk_ei:ntime-1);%the dv in pending I spike coordinate
-        dpsv_ei=ct(dpsv_ei_ic,peak_e,npe);%coordinate transformation
-        
+       
         M_e=(Mr+peak_e(1,1:npe))./(M+Mr);
-        peak_e(1,1:npe)=peak_e(1,1:npe)+(lambda_e+1/tau(1)*h_temp(1)*s_ee-1/tau(3)*M_e*h_temp(3)*s_ei)*dt;
+        dm=lambda_e+1/tau(1)*h_temp(1)*s_ee-1/tau(3)*M_e*h_temp(3)*s_ei;
+        dpsv_ei=ct(dpsv_ei_ic,peak_e,dm,npe);%coordinate transformation
+        
+        peak_e(1,1:npe)=peak_e(1,1:npe)+dm*dt;
         peak_e(2,1:npe)=peak_e(2,1:npe)...
             +(dpsv_ee+dpsv_ei+lambda_e+(1-p_ee)*s_ee^2*h_temp(1)/tau(1)+(1-p_ei)*s_ei^2*h_temp(3)/tau(3))*dt;
         switch index_e
@@ -237,10 +239,12 @@ res.spikecount_i=spikecount_i;
         
         dpsv_ie=vk_ie*spikecount_e(ntime-lvk_ie:ntime-1);
         dpsv_ii_ic=vk_ii*spikecount_i(ntime-lvk_ii:ntime-1);
-        dpsv_ii=ct(dpsv_ii_ic,peak_i,npi);%coordinate transformation
+        
 
         M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
-        peak_i(1,1:npi)=peak_i(1,1:npi)+(lambda_i+1/tau(2)*h_temp(2)*s_ie-1/tau(4)*M_i*h_temp(4)*s_ii)*dt;
+        dm=lambda_i+1/tau(2)*h_temp(2)*s_ie-1/tau(4)*M_i*h_temp(4)*s_ii;
+        dpsv_ii=ct(dpsv_ii_ic,peak_i,dm,npi);%coordinate transformation
+        peak_i(1,1:npi)=peak_i(1,1:npi)+dm*dt;
         peak_i(2,1:npi)=peak_i(2,1:npi)...
         +(dpsv_ie+dpsv_ii+lambda_i+(1-p_ie)*s_ie^2*h_temp(2)/tau(2)+(1-p_ii)*s_ii^2*h_temp(4)/tau(4))*dt;
         switch index_i
@@ -361,16 +365,14 @@ res.spikecount_i=spikecount_i;
         v=(1/sqrt(2*pi*v)*exp(-x.^2/2/v).*((b-a)/100))*((x-a).^2)'-m^2;
     end
 
-    function d=ct(d_ic,peak,np)
+    function d=ct(d_ic,peak,dm,np)
         
         qct=zeros(1,np);
         for i=1:np
-            peak(1,i);
-            peak(2,i);
+            pct(i)=(picd(peak(1,i)+0.0001,peak(2,i))-picd(peak(1,i),peak(2,i)))/0.0001;
             qct(i)=(picd(peak(1,i),peak(2,i)+0.0001)-picd(peak(1,i),peak(2,i)))/0.0001;
         end
-        
-        d=d_ic./qct;
+        d=(d_ic-pct.*dm)./qct;
     end
 
     function v1=picd(m,v)

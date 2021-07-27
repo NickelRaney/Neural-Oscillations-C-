@@ -44,7 +44,7 @@ param.tau_ee   = 1.4;
 param.tau_ie   = 1.2;
 param.tau_ei    = 4.5;
 param.tau_ii    = 4.5;
-param.duration = 0.0148;
+param.duration = 0.015;
 param.delta_time = 0.1;
 param.dt = 0.01;
 %%
