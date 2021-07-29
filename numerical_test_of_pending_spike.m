@@ -24,45 +24,147 @@ end
 plot(var_spike-var_init);
 %% numerical test of pending I spike in another coordinate.
 
-init_e=randn(1,10000)*sqrt(30)+50;
+init_e=randn(1,100000)*sqrt(1)+50;
 init_i=pic(init_e);
 %%
 
-spike=[exprnd(4.5,20,10000)];
-var_spike_i=zeros(1,400);
-mean_spike_i=zeros(1,400);
+spike_e=[exprnd(1.3,10,100000)];
+spike_i=[exprnd(4.5,50,100000)+1;exprnd(4.5,5,100000)+4.5];
 var_spike_e=zeros(1,400);
 mean_spike_e=zeros(1,400);
 d=init_e;
 for t=0.05:0.05:20
-    index = sum(spike > t-0.05 & spike<= t,1);
+    index = sum(spike_i > t-0.05 & spike_i<= t,1);
     d=update(d,index);
+    index2 = sum(spike_e > t-0.05 & spike_e<= t,1);
+    d=d+index2;
     var_spike_e(round(t/0.05))=var(d);
     mean_spike_e(round(t/0.05))=mean(d);
-    var_spike_i(round(t/0.05))=var(init_i-sum(spike<t,1));
-    mean_spike_i(round(t/0.05))=mean(init_i-sum(spike<t,1));
 end
 
 %%
 m=mean(init_e);
 v=var(init_e);
-h=20;
+
 dt=0.01;
-mean_c=zeros(1,1000);
-var_c=zeros(1,1000);
+mean_c=zeros(1,20000);
+var_c=zeros(1,20000);
+dv_c2=zeros(1,20000);
+lmv_c2=zeros(1,20000);
 count=1;
-for t=0.01:0.01:20
-    dv_ic=20*(2/4.5*exp(-2*t/4.5)-exp(-t/4.5)/4.5);
-    dm=-1/4.5*(m+66)/166*h;
-    dv=ct(dv_ic,m,v,dm);
-    m=m+dm*dt;
-    v=v+dv*dt;
-    h=h-h/4.5*dt;
-    mean_c(count)=m;
+lm=log(m+66);
+lmv=log(v+(m+66)^2);
+m=m+66;
+for t=0.01:0.01:1
+
+    
+    m=m+10*(exp(-t/1.3))/1.3*dt;
+    v=v+10*(2/1.3*exp(-2*t/1.3)-exp(-t/1.3)/1.3)*dt;
+    
+    lmv=log(v+m^2);
+    lm=log(m);
+    
+    lmv_c2(count)=lmv;
+    dv_c2(count)=dv_i;
+    mean_c(count)=m-66;
+    var_c(count)=v;
+    count=count+1;
+end
+ 
+ for t=1.01:0.01:4.5
+    b=t-1;
+    lm=lm+50*(-1/4.5*exp(-b/4.5)/166)/(-(1-exp(-b/4.5))/166+1)*dt;
+    lmv=lmv+50*(-1/4.5*exp(-b/4.5)+1/4.5*exp(-b/4.5)*(1-1/166)^2)/(exp(-b/4.5)+(1-exp(-b/4.5))*(1-1/166)^2)*dt;
+    
+    dv_i=exp(lmv)-exp(2*lm)-v;
+    
+    m=exp(lm)+10*(exp(-t/1.3))/1.3*dt;
+    v=v+10*(2/1.3*exp(-2*t/1.3)-exp(-t/1.3)/1.3)*dt+dv_i;
+    
+    lmv=log(v+m^2);
+    lm=log(m);
+    
+    lmv_c2(count)=lmv;
+    dv_c2(count)=dv_i;
+    mean_c(count)=m-66;
+    var_c(count)=v;
+    count=count+1;
+ end
+ 
+ for t=4.51:0.01:20
+     
+    b=t-1;
+    lm=lm+50*(-1/4.5*exp(-b/4.5)/166)/(-(1-exp(-b/4.5))/166+1)*dt;
+    lmv=lmv+50*(-1/4.5*exp(-b/4.5)+1/4.5*exp(-b/4.5)*(1-1/166)^2)/(exp(-b/4.5)+(1-exp(-b/4.5))*(1-1/166)^2)*dt;
+    a=t-4.5;
+    lm=lm+5*(-1/4.5*exp(-a/4.5)/166)/(-(1-exp(-a/4.5))/166+1)*dt;
+    lmv=lmv+5*(-1/4.5*exp(-a/4.5)+1/4.5*exp(-a/4.5)*(1-1/166)^2)/(exp(-a/4.5)+(1-exp(-a/4.5))*(1-1/166)^2)*dt;
+    
+    dv_i=exp(lmv)-exp(2*lm)-v;
+    m=exp(lm)+10*(exp(-t/1.3))/1.3*dt;
+    v=v+10*(2/1.3*exp(-2*t/1.3)-exp(-t/1.3)/1.3)*dt+dv_i;
+    
+    lmv=log(v+m^2);
+    lm=log(m);
+    
+    mean_c(count)=m-66;
+    var_c(count)=v;
+    count=count+1;
+ end
+ 
+ %%
+m=mean(init_e);
+v=var(init_e);
+hi=1;
+he=1;
+dt=0.01;
+mean_c=zeros(1,20000);
+var_c=zeros(1,20000);
+dv_c1=zeros(1,20000);
+lmv_c1=zeros(1,20000);
+count=1;
+lm=log(m+66);
+lmv=log(v+(m+66)^2);
+m=m+66;
+for t=0:0.01:4.5
+    m=m-m/166*hi/4.5*dt;
+    lmv=lmv+(-1/4.5*exp(-t/4.5)+1/4.5*exp(-t/4.5)*(1-1/166)^2)/(exp(-t/4.5)+(1-exp(-t/4.5))*(1-1/166)^2)*dt;
+    dv_i=exp(lmv)-m^2-v;
+   
+    m=m+he/1.3*dt;
+    v=v+(2/1.3*exp(-2*t/1.3)-exp(-t/1.3)/1.3)*dt+dv_i;
+    
+    he=he-he/1.3*dt;
+    hi=hi-hi/4.5*dt;
+    
+    lmv=log(v+m^2);
+    
+    lmv_c1(count)=lmv;
+    dv_c1(count)=dv_i;
+    mean_c(count)=m-66;
     var_c(count)=v;
     count=count+1;
 end
 
+ for t=4.501:0.01:20
+     
+    lm=lm+(-1/4.5*exp(-t/4.5)/166)/(-(1-exp(-t/4.5))/166+1)*dt;
+    lmv=lmv+(-1/4.5*exp(-t/4.5)+1/4.5*exp(-t/4.5)*(1-1/166)^2)/(exp(-t/4.5)+(1-exp(-t/4.5))*(1-1/166)^2)*dt;
+    a=t-4.5;
+    lm=lm+(-1/4.5*exp(-a/4.5)/166)/(-(1-exp(-a/4.5))/166+1)*dt;
+    lmv=lmv+(-1/4.5*exp(-a/4.5)+1/4.5*exp(-a/4.5)*(1-1/166)^2)/(exp(-a/4.5)+(1-exp(-a/4.5))*(1-1/166)^2)*dt;
+    
+    dv_i=exp(lmv)-exp(2*lm)-v;
+    m=exp(lm)+(exp(-t/1.3))/1.3*dt;
+    v=v+(2/1.3*exp(-2*t/1.3)-exp(-t/1.3)/1.3)*dt+dv_i;
+    
+    lmv=log(v+m^2);
+    lm=log(m);
+    
+    mean_c(count)=m-66;
+    var_c(count)=v;
+    count=count+1;
+ end
 %%
 init_i=randn(1,10000)*sqrt(30)+10;
 init_e=pec(init_i);
