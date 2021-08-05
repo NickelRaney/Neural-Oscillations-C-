@@ -160,7 +160,7 @@ res.record=record;
         lm=lm+dpsm_ei*dt;
         lmv=lmv+dpsv_ei*dt;
         
-        dv_i=exp(lmv)-exp(2*lm)-peak_e(2,1:npe)
+        dv_i=exp(lmv)-exp(2*lm)-peak_e(2,1:npe);
         
         record(ntime-lmax,1:4)=[dpsm_ee,dpsv_ee,dpsm_ei,dpsv_ei];
         
