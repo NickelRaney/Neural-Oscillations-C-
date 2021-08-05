@@ -57,6 +57,7 @@ tic;
 res_ode=ode_full(param2);
 toc;
 rasterplot(res_ode,param2);
+%%
 set(gcf,'Position',[10,10,1000,300]);
 name='pei=0.415-s=n-r=0';    
 title(name);
