@@ -39,10 +39,10 @@ param.duration = 3;
 
 %% Example
 % Setting Parameters
-save_bool = true;
+save_bool = false;
 param1 = param;
 param1.factor_Leak = inf;
-beta = 1;
+beta = 10;
 alpha = 10;
 param1.M = 100*beta;
 param1.Mr = 66*beta;
@@ -61,7 +61,7 @@ param1.tau_ei   = 4.5;
 param1.tau_ii   = 4.5;
 param1.s_ee     = 5*0.15/alpha * beta;
 param1.s_ie     = 2*0.5/alpha * beta;
-param1.s_ei     = 4.91*0.5/alpha* beta;
+param1.s_ei     = 2.65/alpha* beta;
 param1.s_ii     = 4.91*0.4/alpha* beta;
 % param1.s_ee     = 5/alpha * beta;
 % param1.s_ie     = 2/alpha * beta;
@@ -71,15 +71,15 @@ param1.ns_ee    = alpha;
 param1.ns_ie    = alpha;
 param1.ns_ei    = alpha;
 param1.ns_ii    = alpha;
-param1.tau_ri   = 0;
-param1.tau_re   = 0;
+param1.tau_ri   = 2.5;
+param1.tau_re   = 2.5;
 param1.delta_time  = 0.1;
 param1.duration  = 3;
 param1.lambda_e = 7000*beta;
 param1.lambda_i = 7000*beta;
 bar = 50*beta;
 tic;
-res = model_L(param1);
+res = model_LCI(param1);
 toc;
 
 %%
@@ -122,26 +122,34 @@ subplot(4,1,1);
 rasterplot(res, param1);
 title({['Raster-', save_name], ['FrE=', num2str(fr.e), ' FrI=', num2str(fr.i), ' SSI=', num2str(SSI)]});
 box on;
-if param1.duration >= 3000
-    xlim([param1.duration-3000, param1.duration]);
+x1 = param1.duration*1000-3000;
+x2 = param1.duration*1000;
+if param1.duration >= 3
+    xlim([x1, x2]);
 end
 
 % HE, HI traj
 subplot(4,1,2);
 box on;
-l1=plot(res.time, res.tHE,'r');
+l1=plot(res.time*1000, res.tHE,'r');
 hold on;
-l2=plot(res.time, res.tHI,'b');
+l2=plot(res.time*1000, res.tHI,'b');
 ylabel('Count');
 legend('HE','HI');
+if param1.duration >= 3
+    xlim([x1, x2]);
+end
 title('H-Trajectory');
 
 % NG
 subplot(4,1,3);
 box on;
-l2=plot(res.time, res.NGE/param1.ne,'r');
+l2=plot(res.time*1000, res.NGE/param1.ne,'r');
 hold on;
-l2=plot(res.time, res.NGI/param1.ni,'b');
+l2=plot(res.time*1000, res.NGI/param1.ni,'b');
+if param1.duration >= 3
+    xlim([x1, x2]);
+end
 legend('N_{GE}',  'N_{GI}');
 title('NG-Trajectory');
 ylabel('Percentage');
@@ -149,9 +157,12 @@ ylabel('Percentage');
 %NR
 subplot(4,1,4);
 box on;
-l3=plot(res.time, res.NRE/param1.ne,'r');
+l3=plot(res.time*1000, res.NRE/param1.ne,'r');
 hold on;
-l4=plot(res.time, res.NRI/param1.ni,'b');
+l4=plot(res.time*1000, res.NRI/param1.ni,'b');
+if param1.duration >= 3
+    xlim([x1, x2]);
+end
 legend('N_{RE}', 'N_{RI}');
 title('NR-Trajectory');
 ylabel('Percentage');
