@@ -1,4 +1,4 @@
-function [res]=ode_full(param,esi_e,esi_i)
+function [res]=ode_full(param,init)
 %This is the ode version of full model. 
 ne = param.ne;
 ni = param.ni;
@@ -27,11 +27,11 @@ lambda_e = param.lambda_e/1000;
 lambda_i = param.lambda_i/1000;
 
 
-esi_e=exprnd(1/lambda_e,lambda_e*(duration*1.05),ne); %external spike interval
-esi_i=exprnd(1/lambda_i,lambda_i*(duration*1.05),ni); %external spike interval
+esi_e=exprnd(1/lambda_e,lambda_e*(duration*1.2),ne); %external spike interval
+esi_i=exprnd(1/lambda_i,lambda_i*(duration*1.2),ni); %external spike interval
 while min(sum(esi_e))<duration || min(sum(esi_i))<duration
-    esi_e=exprnd(1/lambda_e,lambda_e*(duration*1.05),ne); %external spike interval
-    esi_i=exprnd(1/lambda_i,lambda_i*(duration*1.05),ni); %external spike interval
+    esi_e=exprnd(1/lambda_e,lambda_e*(duration*1.2),ne); %external spike interval
+    esi_i=exprnd(1/lambda_i,lambda_i*(duration*1.2),ni); %external spike interval
 end
 
 
@@ -65,15 +65,24 @@ for i=2:size(ex_e,1)
     ex_e(i,:)=ex_e(i,:)+ex_e(i-1,:)*qe;
     ex_i(i,:)=ex_i(i,:)+ex_i(i-1,:)*qi;
 end
+ex_e(1:1000,:)=ex_e(1001:2000,:);
+ex_i(1:1000,:)=ex_i(1001:2000,:);
 
 
 
-he=zeros(2,300);
-hi=zeros(2,100);
+if isempty(init)
+    ve=zeros(1,ne);
+    vi=zeros(1,ni);
+    he=zeros(2,300);
+    hi=zeros(2,100);
+else
+    ve=init.ve;
+    vi=init.vi;
+    he=init.he;
+    hi=init.hi;
+end
 
 
-ve=zeros(1,ne);
-vi=zeros(1,ni);
 refc_e=zeros(1,ne);%ref clock
 refc_i=zeros(1,ni);
 
@@ -88,6 +97,9 @@ res.HE = zeros(ceil(duration/dt)+1,ne+ni);
 res.HI = zeros(ceil(duration/dt)+1,ne+ni);
 res.VE = zeros(ceil(duration/dt)+1,ne);
 res.VI = zeros(ceil(duration/dt)+1,ni);
+res.spikecount_e = zeros(ceil(duration/dt)+1,1);
+res.spikecount_i = zeros(ceil(duration/dt)+1,1);
+
 
 for step=2:duration/dt
     rind_e= refc_e==0; %ref index
@@ -135,6 +147,8 @@ for step=2:duration/dt
     res.VI(step,:)=vi(:);
     res.HE(step,:)=[he(1,:),hi(1,:)];
     res.HI(step,:)=[he(2,:),hi(2,:)];
+    res.spikecount_e(step)=spikecount_e;
+    res.spikecount_i(step)=spikecount_i;
 end
 res.spike=[spike_e,spike_i];
 res.spike(2:end,:)=res.spike(2:end,:)/1000;

@@ -38,6 +38,8 @@ tau(2)=param.tau_ie;
 tau(3)=param.tau_ei;
 tau(4)=param.tau_ii;
 %in order: ee,ie,ei,ii
+spikecount_e=0;
+spikecount_i=0;
 
 t=0;
 t_temp=0;
@@ -50,6 +52,9 @@ res.h=zeros(duration/delta_time,4);
 res.index_e=zeros(duration/delta_time,1);
 res.index_i=zeros(duration/delta_time,1);
 res.t = zeros(duration/delta_time,1);
+
+res.spikecount_e=zeros(duration/delta_time,1);
+res.spikecount_i=zeros(duration/delta_time,1);
 
 index_e=1;
 index_i=1;
@@ -66,6 +71,10 @@ while t < duration
         res.npe(index1) = npe;
         res.index_e(index1)=index_e;
         res.index_i(index1)=index_i;
+        res.spikecount_e(index1) =  spikecount_e;
+        res.spikecount_i(index1) =  spikecount_i;
+        spikecount_e = 0;
+        spikecount_i = 0;
         res.h(index1,:)=h(:)';
         res.t(index1) = t;
         t_temp=0;
@@ -87,6 +96,7 @@ end
                 V_e(1,:)=-2*peak_e(2,1:npe)./(M+Mr);
                 peak_e(2,1:npe)=peak_e(2,1:npe)+(lambda_e+1/tau(3)*V_e(1,:)*h_temp(3)*s_ei)*dt;
                 peak_e(1,1:npe)=peak_e(1,1:npe)+(lambda_e+1/tau(1)*h_temp(1)*s_ee-1/tau(3)*M_e*h_temp(3)*s_ei)*dt;
+                
                 if peak_e(1,1)+3*sqrt(peak_e(2,1))>M
                     dh = peak_e(3,1) - phi(M-peak_e(1,1),peak_e(2,1));
                     index_e = 2;
@@ -98,6 +108,7 @@ end
                     peak_e(3,1) = peak_e(3,1) - dh;
                     h(1)=h(1)+dh*ne;
                     h(2)=h(2)+dh*ne;
+                    spikecount_e=spikecount_e+dh*ne;
                 end
             case 2
                 M_e=(Mr+peak_e(1,1:npe))./(M+Mr);
@@ -132,6 +143,7 @@ end
                     %   peak_e(2,npe)=v_new;
                     index_e = 3;
                 end
+                spikecount_e=spikecount_e+max(dh,0)*ne;
             case 3
                 M_e=(Mr+peak_e(1,1:npe))./(M+Mr);
                 V_e(1,:)=-2*peak_e(2,1:npe)./(M+Mr);
@@ -149,6 +161,7 @@ end
                     h(2)=h(2)+dh*ne;
                     index_e = 2;
                 end
+                spikecount_e=spikecount_e+max(dh,0)*ne;
         end
         if peak_e(3,2)*peak_e(2,2)~=0
             if (peak_e(1,1)-sqrt(peak_e(2,1))<peak_e(1,2)+sqrt(peak_e(2,2))) || (peak_e(1,2)+3*sqrt(peak_e(2,2))>M)
@@ -183,6 +196,7 @@ end
                     peak_i(2, npi) = v_new;
                     peak_i(3, npi) = dh;
                     peak_i(3,1) = peak_i(3,1) - dh;
+                    spikecount_i=spikecount_i+dh*ni;
                 end
             case 2
                 M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
@@ -211,6 +225,7 @@ end
                         npi = 1;
                         index_i = 1;
                     end
+                    
                 else
                     % npi=npi+1;
                     % [m_new,v_new]=newpeak(peak_i(2,1),peak_i(3,1),peak_i(3,npi)+peak_i(3,1));
@@ -218,6 +233,7 @@ end
                     % peak_i(2,npi)=v_new;
                     index_i = 3;
                 end
+                spikecount_i=spikecount_i+max(dh,0)*ni;
             case 3
                 M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
                 V_i(1,:)=-2*peak_i(2,1:npi)./(M+Mr);
@@ -235,6 +251,7 @@ end
                     h(4)=h(4)+dh*ni;
                     index_i = 2;
                 end
+                spikecount_i=spikecount_i+max(dh,0)*ni;
         end
         if peak_i(3,2)*peak_i(2,2)~=0
             if (peak_i(1,1)-sqrt(peak_i(2,1))<peak_i(1,2)+sqrt(peak_i(2,2))) || (peak_i(1,2)+3*sqrt(peak_i(2,2))>M)
