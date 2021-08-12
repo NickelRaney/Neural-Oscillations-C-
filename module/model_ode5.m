@@ -1,58 +1,61 @@
-function res = model_ode2(param)
+function res = model_ode5(param)
 %this function delete the effect of pending spike on variance
 %this is the ode model of gamma
 duration= param.duration*1000;
 delta_time=param.delta_time;
-dt = param.dt;
-ne = param.ne;
-ni = param.ni;
-s_ee = param.s_ee;
-s_ie = param.s_ie;
-s_ei = param.s_ei;
-s_ii = param.s_ii;
+dt=param.dt;
+ne=param.ne;
+ni=param.ni;
+s_ee=param.s_ee;
+s_ie=param.s_ie;
+s_ei=param.s_ei;
+s_ii=param.s_ii;
 
-lambda_e = param.lambda_e;
-lambda_i = param.lambda_i;
-
-Mr = param.Mr;
-M = param.M;
+lambda_e=param.lambda_e;
+lambda_i=param.lambda_i;
+Mr=param.Mr;
+M=param.M;
 
 %peak_e&i will record the state of each peak using 3 variables, it can
 %record 10 peaks maximally. The first row is the mean of each peak, the
 %second is the variance while the third is the share of each peak in total
 %population.
 
-peak_e = zeros(3,10);
-peak_i = zeros(3,10);
+peak_e=zeros(3,10);
+peak_i=zeros(3,10);
 
 %npe&i record the number of peaks.
 
 npe=1;
 npi=1;
-peak_e(3,1) = 1;
-peak_i(3,1) = 1;
-h = zeros(1,4);
-tau = zeros(1,4);
-tau(1) = param.tau_ee;
-tau(2) = param.tau_ie;
-tau(3) = param.tau_ei;
-tau(4) = param.tau_ii;
+peak_e(3,1)=1;
+peak_i(3,1)=1;
+h=zeros(1,4);
+tau=zeros(1,4);
+tau(1)=param.tau_ee;
+tau(2)=param.tau_ie;
+tau(3)=param.tau_ei;
+tau(4)=param.tau_ii;
 %in order: ee,ie,ei,ii
 
 t=0;
 t_temp=0;
 
-res.peak_e = zeros(duration/delta_time,30);
-res.peak_i = zeros(duration/delta_time,30);
-res.npi = zeros(duration/delta_time,1);
-res.npe = zeros(duration/delta_time,1);
-res.h = zeros(duration/delta_time,4);
-res.index_e = zeros(duration/delta_time,1);
-res.index_i = zeros(duration/delta_time,1);
-res.t = zeros(duration/delta_time,1);
+res.peak_e = zeros(duration/delta_time, 30);
+res.peak_i = zeros(duration/delta_time, 30);
+res.npi = zeros(duration/delta_time, 1);
+res.npe = zeros(duration/delta_time, 1);
+res.h = zeros(duration/delta_time, 4);
+res.index_e = zeros(duration/delta_time, 1);
+res.index_i = zeros(duration/delta_time, 1);
+res.t = zeros(duration/delta_time, 1);
+res.sd = zeros(duration/delta_time, 2);
 
 index_e=1;
 index_i=1;
+sd_e = 0;
+sd_i = 0;
+
 while t < duration
     t = t+dt;
     t_temp = t_temp+dt;
@@ -68,6 +71,10 @@ while t < duration
         res.index_i(index1)=index_i;
         res.h(index1,:)=h(:)';
         res.t(index1) = t;
+        res.sd(index1,1) = sd_e/delta_time*1000;
+        res.sd(index1,2) = sd_i/delta_time*1000;
+        sd_e = 0;
+        sd_i = 0;
         t_temp=0;
     end
 end
@@ -98,6 +105,7 @@ end
                     peak_e(3,1) = peak_e(3,1) - dh;
                     h(1)=h(1)+dh*ne;
                     h(2)=h(2)+dh*ne;
+                    sd_e = sd_e + 300*dh;
                 end
             case 2
                 M_e=(Mr+peak_e(1,1:npe))./(M+Mr);
@@ -114,6 +122,7 @@ end
                         %   [m_new,v_new]=newpeak(peak_e(2,1),peak_e(3,1),peak_e(3,npe+1)+peak_e(3,1));
                         %   peak_e(1,1)=m_new;
                         %   peak_e(2,1)=v_new;
+                        
                         %   peak_e(3,1)=peak_e(3,npe+1)+peak_e(3,1);
                         %   peak_e(3,npe+1)=0;
                         m_new = sum(peak_e(3,1:npe).*peak_e(1,1:npe));
@@ -124,6 +133,7 @@ end
                         npe = 1;
                         index_e = 1;
                     end
+                    sd_e = sd_e + 300*dh;
                 else
                     %   npe=npe+1;
                     %   [m_new,v_new]=newpeak(peak_e(2,1),peak_e(3,1),peak_e(3,npe)+peak_e(3,1));
@@ -147,6 +157,7 @@ end
                     h(1)=h(1)+dh*ne;
                     h(2)=h(2)+dh*ne;
                     index_e = 2;
+                    sd_e = sd_e + 300*dh;
                 end
         end
         if peak_e(3,2)*peak_e(2,2)~=0
@@ -182,6 +193,7 @@ end
                     peak_i(2, npi) = v_new;
                     peak_i(3, npi) = dh;
                     peak_i(3,1) = peak_i(3,1) - dh;
+                    sd_i = sd_i + 100*dh;
                 end
             case 2
                 M_i=(Mr+peak_i(1,1:npi))./(M+Mr);
@@ -210,6 +222,7 @@ end
                         npi = 1;
                         index_i = 1;
                     end
+                    sd_i = sd_i + 100*dh;
                 else
                     % npi=npi+1;
                     % [m_new,v_new]=newpeak(peak_i(2,1),peak_i(3,1),peak_i(3,npi)+peak_i(3,1));
@@ -233,6 +246,7 @@ end
                     h(3)=h(3)+dh*ni;
                     h(4)=h(4)+dh*ni;
                     index_i = 2;
+                    sd_i = sd_i + 100*dh;
                 end
         end
         if peak_i(3,2)*peak_i(2,2)~=0
