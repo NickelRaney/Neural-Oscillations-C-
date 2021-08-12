@@ -58,8 +58,6 @@ end
 m=mean(dm,2);
 v=var(dm');
 errorbar([-20:19],m,v);
-xlabel('difference of mean in the last MFE');
-ylabel('difference of mean in the next MFE');
 %%
 res_lif=res{19,6};
 mfe_init=[];

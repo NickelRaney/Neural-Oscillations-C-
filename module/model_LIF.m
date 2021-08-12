@@ -88,6 +88,8 @@ res.HE = zeros(ceil(duration/dt)+1,ne+ni);
 res.HI = zeros(ceil(duration/dt)+1,ne+ni);
 res.VE = zeros(ceil(duration/dt)+1,ne);
 res.VI = zeros(ceil(duration/dt)+1,ni);
+res.spikecount_e = zeros(ceil(duration/dt),1);
+res.spikecount_i = zeros(ceil(duration/dt),1);
 
 for step=2:duration/dt
     rind_e= refc_e==0; %ref index
@@ -105,6 +107,9 @@ for step=2:duration/dt
     sind_i = vi>100; %spike index
     spikecount_e=sum(sind_e);
     spikecount_i=sum(sind_i);
+    res.spikecount_e(step-1)=spikecount_e;
+    res.spikecount_i(step-1)=spikecount_i;
+    
     if spikecount_e>0
         if ref_e<0
             ve(sind_e)=ve(sind_e)-100;

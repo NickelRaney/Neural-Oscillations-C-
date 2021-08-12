@@ -50,7 +50,7 @@ param.p_ii     = 1;
 % param.s_ii     = 4.91/alpha*beta;
 param.s_ee     = 5*0.15/alpha*beta;
 param.s_ie     = 2*0.5/alpha*beta;
-param.s_ei     = 4.91*0.5/alpha*beta;
+param.s_ei     = 4.91*0.421/alpha*beta;
 param.s_ii     = 4.91*0.4/alpha*beta;
 
 param.lambda_e = 7000*beta;
@@ -61,7 +61,7 @@ param.tau_ei    = 4.5;
 param.tau_ii    = 4.5;
 param.tau_re=0;
 param.tau_ri=0;
-param.duration = 1;
+param.duration = 3;
 param.delta_time = 0.1;
 
 param.factor_Leak=0;
@@ -81,7 +81,7 @@ param2.gridsize=0.1;
 %% Model_lif
 
 tic;
-res_lif=model_LIF(param2);
+res_lif=ode_full(param2,[]);
 toc;
 
 %% Compare distributions versus time
