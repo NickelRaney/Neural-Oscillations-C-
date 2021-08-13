@@ -60,8 +60,12 @@ for s=1:21
 end
 
 %%
+<<<<<<< Updated upstream
 m=mean(dm,2);
 v=sqrt(var(dm')/400);
 errorbar([-10:10],m,v);
 xlabel('m_{VE}-m_{VI} before MFE');
 ylabel('m_{VE}-m_{VI} after MFE');
+=======
+
+>>>>>>> Stashed changes

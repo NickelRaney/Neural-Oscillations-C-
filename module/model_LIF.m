@@ -1,4 +1,4 @@
-function [res]=model_LIF(param,esi_e,esi_i)
+function [res]=ode_full(param,esi_e,esi_i)
 %This is the ode version of full model. 
 ne = param.ne;
 ni = param.ni;
@@ -88,8 +88,13 @@ res.HE = zeros(ceil(duration/dt)+1,ne+ni);
 res.HI = zeros(ceil(duration/dt)+1,ne+ni);
 res.VE = zeros(ceil(duration/dt)+1,ne);
 res.VI = zeros(ceil(duration/dt)+1,ni);
+<<<<<<< Updated upstream
 res.spikecount_e = zeros(ceil(duration/dt),1);
 res.spikecount_i = zeros(ceil(duration/dt),1);
+=======
+res.spikecount_e = zeros(ceil(duration/dt)+1,1);
+res.spikecount_i = zeros(ceil(duration/dt)+1,1);
+>>>>>>> Stashed changes
 
 for step=2:duration/dt
     rind_e= refc_e==0; %ref index
@@ -140,6 +145,8 @@ for step=2:duration/dt
     res.VI(step,:)=vi(:);
     res.HE(step,:)=[he(1,:),hi(1,:)];
     res.HI(step,:)=[he(2,:),hi(2,:)];
+    res.spikecount_e(step) = spikecount_e;
+    res.spikecount_i(step) = spikecount_i;
 end
 res.spike=[spike_e,spike_i];
 res.spike(2:end,:)=res.spike(2:end,:)/1000;
