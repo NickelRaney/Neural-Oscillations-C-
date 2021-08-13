@@ -1,4 +1,4 @@
-function [res]=ode_full(param,init)
+function [res]=model_LIF2(param,init)
 %This is the ode version of full model. 
 ne = param.ne;
 ni = param.ni;
