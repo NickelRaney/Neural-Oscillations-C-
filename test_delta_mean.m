@@ -25,7 +25,7 @@ param.p_ii     = 1;
 % param.s_ii     = 4.91;
 param.s_ee     = 5*0.15;
 param.s_ie     = 2*0.5;
-param.s_ei     = 4.91*0.415;
+param.s_ei     = 4.91*0.42;
 param.s_ii     = 4.91*0.4;
 param.lambda_e = 7000;
 param.lambda_i = 7000;
@@ -50,9 +50,9 @@ toc;
 rasterplot(res_lif,param);
 
 %% Test Parameters Initilization
-single_parameter_test_time = 800;
+single_parameter_test_time = 200;
 lowerbound = -10;
-upperbound = 10;
+upperbound = 25;
 gridsize = 0.5;
 
 %% Tests For Multiple Parameters
@@ -64,17 +64,17 @@ delta_m = zeros(size_params, single_parameter_test_time);
 for iter1 = 1:size_params
     diff = params(iter1);
     disp(['iteration ',num2str(iter1), ': Difference = ', num2str(diff)]);
-    init.ve=sqrt(75)*randn(1,300)+diff;
-    init.vi=sqrt(80)*randn(1,100);
-    m=max(max(init.ve),max(init.vi))-100;
-    init.ve=init.ve-m-1;
-    init.vi=init.vi-m-1;
-    init.he=zeros(2,300);
-    init.hi=zeros(2,100);
     param.duration=0.05;
     t_start=tic;
-    for trial=1:single_parameter_test_time
-        res_lif=model_LIF2(param,init);
+    parfor trial=1:single_parameter_test_time
+        he=zeros(2,300);
+        hi=zeros(2,100);
+        ve=sqrt(75)*randn(1,300)+diff;
+        vi=sqrt(80)*randn(1,100);
+        m=max(max(ve),max(vi))-100;
+        ve=ve-m-1;
+        vi=vi-m-1;
+        res_lif=model_LIF2(param,ve,vi,he,hi);
         mfe_init=[];
         i=1;
         while res_lif.spikecount_e(i)==0
@@ -111,6 +111,20 @@ errorbar(params,mean_m,se_m);
 xlabel('m_{VE}-m_{VI} before MFE');
 ylabel('m_{VE}-m_{VI} after MFE');
 set(gcf,'Position',[10,10,800, 600]);
+title(['LIF model:', newline,' P_{EI}=', num2str(p_ei)]);
+
+%%
+delta_m1 = zeros(size_params, single_parameter_test_time);
+for iter1 = 1:size_params
+    for trial = 1:single_parameter_test_time
+        delta_m1(iter1, trial) =  params(iter1);
+    end
+end
+a = reshape(delta_m1, size_params*single_parameter_test_time,1);
+b = reshape(delta_m, size_params*single_parameter_test_time,1);
+scatter(a, b,'.');
+xlabel('m_{VE}-m_{VI} before MFE');
+ylabel('m_{VE}-m_{VI} after MFE');
 title(['LIF model:', newline,' P_{EI}=', num2str(p_ei)]);
 
 %%
