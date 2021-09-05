@@ -1,6 +1,8 @@
 %% Setting paths
 addpath('module');
+
 %% ode2
+
 param.ne       = 300;
 param.ni       = 100;
 param.s_ee     = 5*0.15;
@@ -19,6 +21,7 @@ param.tau_ii    = 4.5;
 param.duration = 1;
 param.delta_time = 0.5;
 param.dt = 0.01;
+
 %%
 tic;
 res=model_ode2(param);
@@ -103,9 +106,12 @@ res_mif=model_L(param);
 toc;
 
 %%
+
 s_path='./';
 compare_video(param,res,res_mif,s_path)
+
 %%
+
 range=[1:300];
 subplot(2,2,1);
 plot(sum(res_mif.HE(range,1:300),2))

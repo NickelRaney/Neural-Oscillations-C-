@@ -98,8 +98,8 @@ for step=2:duration/dt
     refc_e(~rind_e)=refc_e(~rind_e)-1;
     refc_i(~rind_i)=refc_i(~rind_i)-1;
     
-    ve(rind_e)=ve(rind_e)+(ex_e(step,rind_e)+see*he(1,rind_e)/tau_ee-sei*he(2,rind_e)/tau_ei.*(ve(rind_e)+Mr)/(M+Mr))*dt;
-    vi(rind_i)=vi(rind_i)+(ex_i(step,rind_i)+sie*hi(1,rind_i)/tau_ie-sii*hi(2,rind_i)/tau_ii.*(vi(rind_i)+Mr)/(M+Mr))*dt;
+    ve(rind_e)=ve(rind_e)+(7+see*he(1,rind_e)/tau_ee-sei*he(2,rind_e)/tau_ei.*(ve(rind_e)+Mr)/(M+Mr))*dt;
+    vi(rind_i)=vi(rind_i)+(7+sie*hi(1,rind_i)/tau_ie-sii*hi(2,rind_i)/tau_ii.*(vi(rind_i)+Mr)/(M+Mr))*dt;
     
     he=he.*[exp(-dt/tau_ee);exp(-dt/tau_ei)];
     hi=hi.*[exp(-dt/tau_ie);exp(-dt/tau_ii)];
@@ -113,7 +113,7 @@ for step=2:duration/dt
     
     if spikecount_e>0
         if ref_e<0
-            ve(sind_e)=ve(sind_e)-100;
+            ve(sind_e)=0;
         else
             ve(sind_e)=0;
             refc_e(sind_e)=refc_e(sind_e)+ref_e;

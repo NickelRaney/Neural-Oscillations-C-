@@ -10,6 +10,10 @@ param.s_ee     = 5*0.15;
 param.s_ie     = 2*0.5;
 param.s_ei     = 4.91*0.5;
 param.s_ii     = 4.91*0.4;
+param.p_ee     = 1;
+param.p_ie     = 1;
+param.p_ei     = 1;
+param.p_ii     = 1;
 param.M        = 100;
 param.Mr       = 66;
 param.lambda_e = 7;
@@ -19,13 +23,13 @@ param.tau_ie   = 1.2;
 param.tau_ei   = 4.5;
 param.tau_ii   = 4.5;
 param.duration = 1;
-param.delta_time = 5;
+param.delta_time = 0.1;
 param.dt = 0.01;
 
 %% Model_ode
 
 tic;
-res_ode=model_ode5(param);
+res_ode=model_ode2(param);
 toc;
 
 %% Parameters for Model_lif
@@ -50,7 +54,7 @@ param.p_ii     = 1;
 % param.s_ii     = 4.91/alpha*beta;
 param.s_ee     = 5*0.15/alpha*beta;
 param.s_ie     = 2*0.5/alpha*beta;
-param.s_ei     = 4.91*0.421/alpha*beta;
+param.s_ei     = 4.91*0.5/alpha*beta;
 param.s_ii     = 4.91*0.4/alpha*beta;
 
 param.lambda_e = 7000*beta;
@@ -79,9 +83,12 @@ param2.gridsize=0.1;
 
 
 %% Model_lif
-
+ve = zeros(1,300);
+vi = zeros(1,100);
+he = zeros(2,300);
+hi = zeros(2,100);
 tic;
-res_lif=ode_full(param2,[]);
+res_lif=model_LIF2(param2,ve,vi,he,hi);
 toc;
 
 %% Compare distributions versus time
@@ -114,26 +121,36 @@ end
 
 t1 = param.delta_time:param.delta_time:param.duration*1000;
 t2 = param.delta_time:param.delta_time: size*param.delta_time;
-max_fr1 = max(max(res_ode.sd));
+max_fr1 = max(max(res_ode.spikecount_e), max(res_ode.spikecount_i));
 max_fr2 = max(max(sd_lif(2:end,2)));
 max_fr = max([max_fr1 max_fr2]) *1.2;
 
+%%
 figure;
-subplot(1,2,1);
-plot(t1, res_ode.sd(:,1));
-hold on;
+subplot(2,2,1);
+
 plot(t2(2:end), sd_lif(2:end,1));
 ylim([0, max_fr]);
 xlabel('Time (ms)');
 ylabel('Firing Rate');
-subplot(1,2,2);
-plot(t1, res_ode.sd(:,2));
-hold on;
+subplot(2,2,2);
+
 plot(t2(2:end), sd_lif(2:end,2));
 ylim([0, max_fr]);
 xlabel('Time (ms)');
 legend('ODE', 'LIF');
 
+subplot(2,2,3);
+plot(t1, res_ode.spikecount_e);
+ylim([0, max_fr]);
+xlabel('Time (ms)');
+ylabel('Firing Rate');
+
+subplot(2,2,4);
+plot(t1, res_ode.spikecount_i);
+ylim([0, max_fr]);
+xlabel('Time (ms)');
+legend('ODE', 'LIF');
 sgtitle('Spike Density');
 set(gcf,'Position',[10,10,1000,400]);
 

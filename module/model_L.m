@@ -59,22 +59,18 @@ res.HE = zeros(ceil(duration_time/delta_time)+1,ne+ni);
 res.HI = zeros(ceil(duration_time/delta_time)+1,ne+ni);
 res.VE = zeros(ceil(duration_time/delta_time)+1,ne);
 res.VI = zeros(ceil(duration_time/delta_time)+1,ni);
-res.spikecount =  zeros(ceil(duration_time/delta_time)+1,2);
-res.time = zeros(ceil(duration_time/delta_time)+1,1);
-
+res.time =zeros(ceil(duration_time/delta_time)+1,1);
 index1 = 1;
 t_count = 0;
-spikecount_e=0;
-spikecount_i=0;
 while t < duration_time
     delta = log(1-rand(1)) / sum(c);
     t = t-delta;
     t_temp = t_temp - delta;
-    t_count = t_count -delta;
-    if t_count > 0.1
-        disp(t);
-        t_count = 0;
-    end
+%     t_count = t_count -delta;
+%     if t_count > 0.1
+%         disp(t);
+%         t_count = 0;
+%     end
     if t_temp > delta_time
         HEE_temp = HEE(2: HEE(1)+1);
         HIE_temp = HIE(2: HIE(1)+1);
@@ -86,13 +82,9 @@ while t < duration_time
         res.HI(index1,(ne+1):(ne+ni)) = histcounts(HII_temp,1:(ni+1));
         res.VE(index1,:) = VE - (Mr+1)*(1-awakeE);
         res.VI(index1,:) = VI - (Mr+1)*(1-awakeI);
-        res.spikecount(index1,1) = spikecount_e;
-        res.spikecount(index1,2) = spikecount_i;
         res.time(index1) = t;
         index1  = index1 +1;
         t_temp = 0;
-        spikecount_e=0;
-        spikecount_i=0;
     end
     
     index = find_index(c);      %type of events
@@ -115,17 +107,17 @@ while t < duration_time
                 end
             end
         case 3
-            whichhit = ceil(rand(1)*ne);
-            if awakeE(whichhit) == 1
-                Leak = gLeak * VE(whichhit);
-                VE(whichhit) = VE(whichhit) + real2int(Leak);
-            end
+%             whichhit = ceil(rand(1)*ne);
+%             if awakeE(whichhit) == 1
+%                 Leak = gLeak * VE(whichhit);
+%                 VE(whichhit) = VE(whichhit) + real2int(Leak);
+%             end
         case 4
-            whichhit = ceil(rand(1)*ni);
-            if awakeI(whichhit) == 1
-                Leak = gLeak * VI(whichhit);
-                VI(whichhit) = VI(whichhit) + real2int(Leak);
-            end
+%             whichhit = ceil(rand(1)*ni);
+%             if awakeI(whichhit) == 1
+%                 Leak = gLeak * VI(whichhit);
+%                 VI(whichhit) = VI(whichhit) + real2int(Leak);
+%             end
         case 5
             index = ceil(rand(1)*HEE(1))+1;
             whichhit = HEE(index);
@@ -213,7 +205,6 @@ while t < duration_time
     end
     if spikeE == 1
         spikeE = 0;
-        spikecount_e = spikecount_e+1;
         VE(whichhit) = 0;
         awakeE(whichhit) = 0;
         Eref(Eref(1)+2)=whichhit;
@@ -245,7 +236,6 @@ while t < duration_time
         res.spike(res.spike(1,whichhit)+1,whichhit)=t;
     end
     if spikeI == 1
-        spikecount_i = spikecount_i+1;
         spikeI = 0;
         VI(whichhit) = 0;
         awakeI(whichhit) = 0;
